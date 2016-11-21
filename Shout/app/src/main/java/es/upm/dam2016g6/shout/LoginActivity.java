@@ -25,10 +25,13 @@ public class LoginActivity extends AppCompatActivity {
         FacebookSdk.sdkInitialize(getApplicationContext());
         AppEventsLogger.activateApp(this);
 
+        setContentView(R.layout.activity_login);
+
         FirebaseAuth auth = FirebaseAuth.getInstance();
         if (auth.getCurrentUser() != null) {
             // already signed in
             System.out.println("User already signed in.");
+            startActivity(new Intent(this, MyProfileActivity.class));
         } else {
             // not signed in
             System.out.println("User not signed in.");
@@ -39,17 +42,23 @@ public class LoginActivity extends AppCompatActivity {
                             .build(),
                     RC_SIGN_IN);
         }
-
-//        setContentView(R.layout.activity_login);
     }
 
     // Login response handler
+    // Test users can be found on the Facebook developer console
+    // email1: pzrzpdbpsn_1479747064@tfbnw.net
+    // Passwords: dam12345678
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
         if (resultCode == RESULT_OK) {
             // user is signed in!
             System.out.println("User is now signed in!");
-//            startActivity(new Intent(this, ?.class));
+
+//            IdpResponse idpResponse = IdpResponse.fromResultIntent(data);
+//            String fbToken = idpResponse.getIdpToken();
+//            System.out.println("fbToken: " + fbToken);
+            startActivity(new Intent(this, MyProfileActivity.class));
+
             finish();
             return;
         }
@@ -89,7 +98,7 @@ public class LoginActivity extends AppCompatActivity {
         // "sign in" again, or show a message.
     }
 
-    // Retrieve token ID if needed
+// Retrieve token ID if needed
 //    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
 //        super.onActivityResult(requestCode, resultCode, data);
 //        if (resultCode == RESULT_OK) {

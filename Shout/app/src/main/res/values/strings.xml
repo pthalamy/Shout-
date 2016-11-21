@@ -8,4 +8,6 @@
     <!-- Sign-in Strings-->
     <string name="sign_in_cancelled">Sign in attempt has been cancelled.</string>
     <string name="no_internet_connection">No internet connection. Please check connection and try again.</string>
+    <string name="log_out">Log Out</string>
+    <string name="welcome_accountname">Welcome accountName !</string>
 </resources>
