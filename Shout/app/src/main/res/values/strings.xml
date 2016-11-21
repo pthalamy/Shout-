@@ -2,7 +2,7 @@
     <string name="app_name">Shout!</string>
     <string name="facebook_app_id">365470950456156</string>
     <string name="facebook_application_id" translatable="false">365470950456156</string>
-        <!-- Facebook Application ID, prefixed by 'fb'.  Enables Chrome Custom tabs. -->
+    <!-- Facebook Application ID, prefixed by 'fb'.  Enables Chrome Custom tabs. -->
     <string name="facebook_login_protocol_scheme" translatable="false">fb365470950456156</string>
 
     <!-- Sign-in Strings-->
