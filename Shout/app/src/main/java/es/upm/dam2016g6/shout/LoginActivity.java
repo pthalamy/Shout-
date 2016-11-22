@@ -32,15 +32,11 @@ public class LoginActivity extends AppCompatActivity {
             // already signed in
             System.out.println("User already signed in.");
             startActivity(new Intent(this, MyProfileActivity.class));
+            finish();
         } else {
             // not signed in
             System.out.println("User not signed in.");
-            startActivityForResult(
-                    AuthUI.getInstance()
-                            .createSignInIntentBuilder()
-                            .setProviders(Arrays.asList(new AuthUI.IdpConfig.Builder(AuthUI.FACEBOOK_PROVIDER).build()))
-                            .build(),
-                    RC_SIGN_IN);
+            presentFirebaseSignIn();
         }
     }
 
@@ -71,12 +67,10 @@ public class LoginActivity extends AppCompatActivity {
                     .setAction("CLOSE", new View.OnClickListener() {
                         @Override
                         public void onClick(View view) {
-
                         }
                     })
                     .setActionTextColor(getResources().getColor(android.R.color.holo_red_light ))
                     .show();
-            return;
         }
 
         // No network
@@ -86,16 +80,28 @@ public class LoginActivity extends AppCompatActivity {
                     .setAction("CLOSE", new View.OnClickListener() {
                         @Override
                         public void onClick(View view) {
-
                         }
                     })
                     .setActionTextColor(getResources().getColor(android.R.color.holo_red_light ))
                     .show();
-            return;
         }
 
         // User is not signed in. Maybe just wait for the user to press
         // "sign in" again, or show a message.
+        presentFirebaseSignIn();
+    }
+
+    private void presentFirebaseSignIn() {
+        FirebaseAuth auth = FirebaseAuth.getInstance();
+        startActivityForResult(
+                AuthUI.getInstance()
+                        .createSignInIntentBuilder()
+                        .setProviders(Arrays.asList(new AuthUI.IdpConfig.Builder(AuthUI.FACEBOOK_PROVIDER).build()))
+                        .setLogo(R.mipmap.ic_launcher)
+                        .setIsSmartLockEnabled(true)
+                        .build(),
+                RC_SIGN_IN);
+
     }
 
 // Retrieve token ID if needed
