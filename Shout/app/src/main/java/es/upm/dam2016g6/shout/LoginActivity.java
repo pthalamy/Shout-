@@ -12,7 +12,9 @@ import com.firebase.ui.auth.AuthUI;
 import com.firebase.ui.auth.ui.ResultCodes;
 import com.google.firebase.auth.FirebaseAuth;
 
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
 
 import static com.firebase.ui.auth.ui.AcquireEmailHelper.RC_SIGN_IN;
 
@@ -93,15 +95,30 @@ public class LoginActivity extends AppCompatActivity {
 
     private void presentFirebaseSignIn() {
         FirebaseAuth auth = FirebaseAuth.getInstance();
+
+        // Configure Facebook permissions
+        AuthUI.IdpConfig facebookIdp = new AuthUI.IdpConfig.Builder(AuthUI.FACEBOOK_PROVIDER)
+                .setPermissions(getFacebookPermission())
+                .build();
+
         startActivityForResult(
                 AuthUI.getInstance()
                         .createSignInIntentBuilder()
-                        .setProviders(Arrays.asList(new AuthUI.IdpConfig.Builder(AuthUI.FACEBOOK_PROVIDER).build()))
-                        .setLogo(R.mipmap.ic_launcher)
+                        .setProviders(Arrays.asList(facebookIdp))
+                        .setLogo(R.drawable.ic_shoutlogo)
                         .setIsSmartLockEnabled(true)
                         .build(),
                 RC_SIGN_IN);
 
+    }
+
+    private List<String> getFacebookPermission() {
+        List<String> permissions = new ArrayList<>();
+
+        permissions.add("user_likes");
+        permissions.add("user_friends");
+
+        return permissions;
     }
 
 // Retrieve token ID if needed
