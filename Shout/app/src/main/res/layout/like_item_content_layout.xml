@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/container_inner_item"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:layout_margin="0dp"
+    android:layout_centerVertical="true"
+    android:layout_centerHorizontal="true"
+    tools:showIn="@layout/like_item_layout">
+
+
+    <ImageView
+        android:layout_width="75dp"
+        app:srcCompat="@drawable/com_facebook_button_icon_blue"
+        android:id="@+id/img_pagepic"
+        android:layout_centerHorizontal="true"
+        android:layout_height="75dp"
+        />
+
+    <TextView
+        android:id="@+id/tv_like_name"
+        android:layout_below="@+id/img_pagepic"
+        android:textSize="9sp"
+        android:layout_height="25dp"
+        android:layout_marginTop="2dp"
+        android:layout_width="75dp"
+        android:layout_centerHorizontal="true"
+        android:maxLines="2"
+        tools:text="SomePage"
+        />
+</LinearLayout>
