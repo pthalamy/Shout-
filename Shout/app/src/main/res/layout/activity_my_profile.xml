@@ -7,15 +7,6 @@
     android:layout_height="match_parent"
     tools:context="es.upm.dam2016g6.shout.MyProfileActivity">
 
-    <android.support.v7.widget.Toolbar
-        android:id="@+id/toolbar"
-        android:layout_width="match_parent"
-        android:layout_height="?attr/actionBarSize"
-        android:background="?attr/colorPrimary"
-        android:elevation="4dp"
-        android:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar"
-        app:popupTheme="@style/ThemeOverlay.AppCompat.Dark" />
-
     <TextView
         android:text="@string/welcome_accountname"
         android:layout_width="wrap_content"
@@ -33,7 +24,9 @@
         android:layout_width="match_parent"
         android:layout_height="150dp"
         android:layout_alignParentBottom="true"
-        android:layout_alignParentStart="true" />
+        android:layout_alignParentStart="true"
+        android:layout_marginLeft="8dp"
+        android:layout_marginRight="8dp" />
 
     <ImageView
         app:srcCompat="@drawable/com_facebook_profile_picture_blank_portrait"
@@ -57,4 +50,31 @@
         android:layout_alignParentStart="true"
         android:layout_marginStart="13dp"
         android:textColor="@color/authui_colorActivated"/>
+
+    <android.support.v7.widget.Toolbar
+        android:id="@+id/toolbar"
+        android:layout_width="match_parent"
+        android:layout_height="?attr/actionBarSize"
+        android:background="?attr/colorPrimary"
+        android:elevation="4dp"
+        android:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar"
+        app:popupTheme="@style/ThemeOverlay.AppCompat.Dark"
+        android:layout_alignParentTop="true"
+        android:layout_alignParentStart="true" />
+
+    <com.roughike.bottombar.BottomBar
+        android:id="@+id/bottomBar"
+        android:layout_width="match_parent"
+        android:layout_height="60dp"
+        android:layout_alignParentBottom="true"
+        app:bb_tabXmlResource="@xml/bottombar_tabs"
+        app:bb_activeTabColor="@color/white"
+        app:bb_inActiveTabColor="@color/white"
+        app:bb_activeTabAlpha="1"
+        app:bb_inActiveTabAlpha="0.6"
+        app:bb_titleTextAppearance="@style/TextAppearance.AppCompat.Small"
+        app:bb_showShadow="true"
+        app:theme="@style/AppTheme"
+        />
+
 </RelativeLayout>

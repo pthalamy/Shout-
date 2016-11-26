@@ -10,4 +10,8 @@
     <string name="no_internet_connection">No internet connection. Please check connection and try again.</string>
     <string name="log_out">Log Out</string>
     <string name="welcome_accountname">Welcome accountName !</string>
+    <string name="menu_map">Discovery</string>
+    <string name="menu_chatrooms">Chat Rooms</string>
+    <string name="menu_pm">Messages</string>
+    <string name="menu_profile">Profile</string>
 </resources>

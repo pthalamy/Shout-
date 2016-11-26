@@ -2,6 +2,7 @@ package es.upm.dam2016g6.shout;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.support.annotation.IdRes;
 import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
@@ -23,6 +24,9 @@ import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+import com.roughike.bottombar.BottomBar;
+import com.roughike.bottombar.OnTabReselectListener;
+import com.roughike.bottombar.OnTabSelectListener;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
@@ -40,6 +44,39 @@ public class MyProfileActivity extends AppCompatActivity {
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
+        BottomBar bottomBar = (BottomBar) findViewById(R.id.bottomBar);
+        bottomBar.setOnTabSelectListener(new OnTabSelectListener() {
+            @Override
+            public void onTabSelected(@IdRes int tabId) {
+                if (tabId == R.id.tab_map) {
+                    // The tab with id R.id.tab_favorites was selected,
+                    // change your content accordingly.
+                } else if (tabId == R.id.tab_chatrooms) {
+
+                } else if (tabId == R.id.tab_pm) {
+
+                } else {
+                    
+                }
+            }
+        });
+
+        bottomBar.setOnTabReselectListener(new OnTabReselectListener() {
+            @Override
+            public void onTabReSelected(@IdRes int tabId) {
+                if (tabId == R.id.tab_map) {
+                    // The tab with id R.id.tab_favorites was selected,
+                    // change your content accordingly.
+                } else if (tabId == R.id.tab_chatrooms) {
+
+                } else if (tabId == R.id.tab_pm) {
+
+                } else {
+
+                }
+            }
+        });
+
         loadUserData();
     }
 
@@ -51,7 +88,7 @@ public class MyProfileActivity extends AppCompatActivity {
                 .load(profileImgUrl)
                 .into((ImageView)findViewById(R.id.img_profilePic));
 
-        ((TextView)findViewById(R.id.tv_welcome)).setText("Welcome " + user.getDisplayName());
+        ((TextView)findViewById(R.id.tv_welcome)).setText(user.getDisplayName());
 
         // Retrieve Facebook User Likes
         FacebookSdk.addLoggingBehavior(LoggingBehavior.REQUESTS);
@@ -133,5 +170,6 @@ public class MyProfileActivity extends AppCompatActivity {
 
         }
     }
+
 }
 
