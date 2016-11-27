@@ -33,7 +33,7 @@ public class LoginActivity extends AppCompatActivity {
         if (auth.getCurrentUser() != null) {
             // already signed in
             System.out.println("User already signed in.");
-            startActivity(new Intent(this, MyProfileActivity.class));
+            startActivity(new Intent(this, MainActivity.class));
             finish();
         } else {
             // not signed in
@@ -55,7 +55,7 @@ public class LoginActivity extends AppCompatActivity {
 //            IdpResponse idpResponse = IdpResponse.fromResultIntent(data);
 //            String fbToken = idpResponse.getIdpToken();
 //            System.out.println("fbToken: " + fbToken);
-            startActivity(new Intent(this, MyProfileActivity.class));
+            startActivity(new Intent(this, MainActivity.class));
 
             finish();
             return;
