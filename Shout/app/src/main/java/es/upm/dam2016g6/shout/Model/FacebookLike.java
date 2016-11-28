@@ -1,4 +1,4 @@
-package es.upm.dam2016g6.shout;
+package es.upm.dam2016g6.shout.Model;
 
 import android.os.Bundle;
 

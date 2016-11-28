@@ -1,4 +1,4 @@
-package es.upm.dam2016g6.shout;
+package es.upm.dam2016g6.shout.Activities;
 
 import android.content.Intent;
 import android.os.Bundle;
@@ -14,6 +14,12 @@ import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.roughike.bottombar.BottomBar;
 import com.roughike.bottombar.OnTabSelectListener;
+
+import es.upm.dam2016g6.shout.Fragments.ChatRoomsFragment;
+import es.upm.dam2016g6.shout.Fragments.DiscoveryFragment;
+import es.upm.dam2016g6.shout.Fragments.MyProfileFragment;
+import es.upm.dam2016g6.shout.Fragments.PrivateConversationsFragment;
+import es.upm.dam2016g6.shout.R;
 
 public class MainActivity extends AppCompatActivity
         implements MyProfileFragment.OnProfileInteractionListener {

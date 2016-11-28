@@ -1,4 +1,4 @@
-package es.upm.dam2016g6.shout;
+package es.upm.dam2016g6.shout.Fragments;
 
 
 import android.app.Fragment;
@@ -17,6 +17,8 @@ import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.model.CameraPosition;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MarkerOptions;
+
+import es.upm.dam2016g6.shout.R;
 
 /**
  * A simple {@link Fragment} subclass.

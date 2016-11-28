@@ -1,4 +1,4 @@
-package es.upm.dam2016g6.shout;
+package es.upm.dam2016g6.shout.Support;
 
 import android.content.Context;
 import android.support.v7.widget.RecyclerView;
@@ -12,6 +12,9 @@ import com.bumptech.glide.Glide;
 
 import java.util.List;
 
+import es.upm.dam2016g6.shout.Model.FacebookLike;
+import es.upm.dam2016g6.shout.R;
+
 /**
  * Created by pthalamy on 22/11/16.
  */
@@ -23,7 +26,7 @@ public class MyLikesRecyclerViewAdapter extends
     private List<FacebookLike> items;
     private Context context;
 
-    MyLikesRecyclerViewAdapter(List<FacebookLike> likes) {
+    public MyLikesRecyclerViewAdapter(List<FacebookLike> likes) {
         if (likes == null) {
             throw new IllegalArgumentException(
                     "List of likes must not be null");

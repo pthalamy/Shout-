@@ -1,4 +1,4 @@
-package es.upm.dam2016g6.shout;
+package es.upm.dam2016g6.shout.Fragments;
 
 import android.app.Fragment;
 import android.content.Context;
@@ -27,6 +27,10 @@ import org.json.JSONObject;
 
 import java.util.ArrayList;
 import java.util.List;
+
+import es.upm.dam2016g6.shout.Model.FacebookLike;
+import es.upm.dam2016g6.shout.R;
+import es.upm.dam2016g6.shout.Support.MyLikesRecyclerViewAdapter;
 
 
 /**
