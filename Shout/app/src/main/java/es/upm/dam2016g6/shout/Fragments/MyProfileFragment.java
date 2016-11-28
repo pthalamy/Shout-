@@ -7,6 +7,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -19,8 +20,13 @@ import com.facebook.FacebookSdk;
 import com.facebook.GraphRequest;
 import com.facebook.GraphResponse;
 import com.facebook.LoggingBehavior;
+import com.firebase.geofire.GeoFire;
+import com.firebase.geofire.GeoLocation;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
@@ -29,6 +35,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import es.upm.dam2016g6.shout.Model.FacebookLike;
+import es.upm.dam2016g6.shout.Model.User;
 import es.upm.dam2016g6.shout.R;
 import es.upm.dam2016g6.shout.Support.MyLikesRecyclerViewAdapter;
 
@@ -43,9 +50,10 @@ import es.upm.dam2016g6.shout.Support.MyLikesRecyclerViewAdapter;
  */
 public class MyProfileFragment extends android.support.v4.app.Fragment {
     /* Consult here for lifecycle information: {@link https://developer.android.com/guide/components/fragments.html#Creating} */
-    private static final String TAG = "TAG_MPF";
+    private static final String TAG = "TAG_MyProfileFragment";
 
     private View mView;
+    private List<FacebookLike> fbLikes;
 
     private OnProfileInteractionListener mListener;
 
@@ -75,11 +83,31 @@ public class MyProfileFragment extends android.support.v4.app.Fragment {
         // Inflate the layout for this fragment
         mView =  inflater.inflate(R.layout.fragment_my_profile, container, false);
 
+        // Add toolbar to fragment (contains logout button)
         Toolbar toolbar = (Toolbar) mView.findViewById(R.id.toolbar);
         toolbar.setTitle("My Profile");
         ((AppCompatActivity)getActivity()).setSupportActionBar(toolbar);
 
+        // Configure all views from profile
         loadUserData(mView);
+
+        // Create new User
+        DatabaseReference ref = FirebaseDatabase.getInstance().getReference("locations");
+        FirebaseUser authUser = FirebaseAuth.getInstance().getCurrentUser();
+        GeoFire geoFire = new GeoFire(ref);
+
+        User me = User.addNewUser(authUser.getUid(), authUser.getDisplayName());
+        geoFire.setLocation(me.getUserId(), new GeoLocation(0.0, 0.0), new GeoFire.CompletionListener() {
+            @Override
+            public void onComplete(String key, DatabaseError error) {
+                if (error != null) {
+                    Log.d(MyProfileFragment.TAG, "There was an error saving the location to GeoFire: " + error);
+                } else {
+                    Log.d(MyProfileFragment.TAG, "Location saved on server successfully!");
+                }
+            }
+        });
+
 
         return mView;
     }
@@ -115,17 +143,25 @@ public class MyProfileFragment extends android.support.v4.app.Fragment {
         void onProfileInteraction();
     }
 
+
     private void loadUserData(View view) {
         FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
         String profileImgUrl = user.getPhotoUrl().toString();
 
+        // Load profile picture from Firebase
         Glide.with(this)
                 .load(profileImgUrl)
                 .into((ImageView) mView.findViewById(R.id.img_profilePic));
 
         ((TextView) mView.findViewById(R.id.tv_welcome)).setText(user.getDisplayName());
+        // Store likes into a recycler view and configure it
         RecyclerView rv = (RecyclerView) MyProfileFragment.this.mView.findViewById(R.id.rv_mylikes);
-        // Retrieve Facebook User Likes
+        LinearLayoutManager layoutManager = new LinearLayoutManager(MyProfileFragment.this.getActivity());
+        layoutManager.setOrientation(LinearLayoutManager.HORIZONTAL);
+        layoutManager.scrollToPosition(0);
+        rv.setLayoutManager(layoutManager);
+
+        // Retrieve Facebook User Likes from the Graph API
         FacebookSdk.addLoggingBehavior(LoggingBehavior.REQUESTS);
         /* make the API call */
         GraphRequest request = GraphRequest.newMeRequest(
@@ -140,21 +176,17 @@ public class MyProfileFragment extends android.support.v4.app.Fragment {
 //                            System.out.println(response);
                             JSONArray JSONFbLikes = object.getJSONObject("likes").getJSONArray("data");
 //                            System.out.println(JSONFbLikes);
-
-                            List<FacebookLike> fbLikes = new ArrayList<FacebookLike>(JSONFbLikes.length());
+                            fbLikes =  new ArrayList<FacebookLike>(JSONFbLikes.length());
 
                             for (int i = 0; i < JSONFbLikes.length(); i++) {
                                 JSONObject fbLike = JSONFbLikes.getJSONObject(i);
 //                                System.out.println(fbLike.getString("name"));
+                                // Instantiate new like and fetch page image asynchronously
                                 fbLikes.add(new FacebookLike(fbLike.getString("name"), fbLike.getString("id")));
                             }
 
-                            RecyclerView rv = (RecyclerView) MyProfileFragment.this.mView.findViewById(R.id.rv_mylikes);
-                            LinearLayoutManager layoutManager = new LinearLayoutManager(MyProfileFragment.this.getActivity());
-                            layoutManager.setOrientation(LinearLayoutManager.HORIZONTAL);
-                            layoutManager.scrollToPosition(0);
-                            rv.setLayoutManager(layoutManager);
                             MyLikesRecyclerViewAdapter adapter = new MyLikesRecyclerViewAdapter(fbLikes);
+                            RecyclerView rv = (RecyclerView) MyProfileFragment.this.mView.findViewById(R.id.rv_mylikes);
                             rv.setAdapter(adapter);
                         } catch (Throwable t) {
                             System.err.println(t);

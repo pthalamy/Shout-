@@ -19,7 +19,7 @@ public class FacebookLike {
         this.name = name;
         this.id = id;
 
-        fetchPictureUrl(id);
+        fetchPictureUrl();
     }
 
     @Override
@@ -64,10 +64,10 @@ public class FacebookLike {
         this.id = id;
     }
 
-    private void fetchPictureUrl(String id) {
+    private void fetchPictureUrl() {
         GraphRequest request = GraphRequest.newGraphPathRequest(
                 AccessToken.getCurrentAccessToken(),
-                id,
+                this.id,
                 new GraphRequest.Callback() {
                     @Override
                     public void onCompleted(GraphResponse response) {
@@ -89,6 +89,7 @@ public class FacebookLike {
         Bundle parameters = new Bundle();
         parameters.putString("fields", "picture");
         request.setParameters(parameters);
+
         request.executeAsync();
     }
 }
