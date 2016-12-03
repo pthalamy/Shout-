@@ -33,6 +33,8 @@ import com.google.android.gms.location.LocationSettingsStatusCodes;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.roughike.bottombar.BottomBar;
 import com.roughike.bottombar.OnTabSelectListener;
@@ -57,7 +59,7 @@ public class MainActivity extends AppCompatActivity
     private static final String LOCATION_KEY = "LK_MainActivity";
     private static final String LAST_UPDATED_TIME_STRING_KEY = "LUTSK_MainActivity";
 
-    private boolean mRequestingLocationUpdates = false;
+    private boolean mRequestingLocationUpdates = true;
     private LocationRequest mLocationRequest;
     private GoogleApiClient mGoogleApiClient;
     private Location mCurrentLocation;
@@ -87,6 +89,7 @@ public class MainActivity extends AppCompatActivity
         userId = FirebaseAuth.getInstance().getCurrentUser().getUid();
 
         if (savedInstanceState != null) {
+            updateValuesFromBundle(savedInstanceState);
             return;
         }
 
@@ -114,8 +117,6 @@ public class MainActivity extends AppCompatActivity
 
         // Set up location requests for location updates
         createLocationRequest();
-
-        updateValuesFromBundle(savedInstanceState);
     }
 
     // Toolbar and Menu Methods
@@ -131,7 +132,7 @@ public class MainActivity extends AppCompatActivity
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
             case R.id.action_logout:
-
+                deleteLocationFromFirebase();
                 AuthUI.getInstance()
                         .signOut(this)
                         .addOnCompleteListener(new OnCompleteListener<Void>() {
@@ -213,6 +214,7 @@ public class MainActivity extends AppCompatActivity
     @Override
     protected void onStop() {
         mGoogleApiClient.disconnect();
+        deleteLocationFromFirebase();
         super.onStop();
     }
 
@@ -237,6 +239,7 @@ public class MainActivity extends AppCompatActivity
             //                                          int[] grantResults)
             // to handle the case where the user grants the permission. See the documentation
             // for ActivityCompat#requestPermissions for more details.
+            Log.d(TAG, "Permissions missing for location updates!");
             return;
         }
 
@@ -291,28 +294,35 @@ public class MainActivity extends AppCompatActivity
     }
 
     private void updateValuesFromBundle(Bundle savedInstanceState) {
-    if (savedInstanceState != null) {
-        // Update the value of mRequestingLocationUpdates from the Bundle, and
-        // make sure that the Start Updates and Stop Updates buttons are
-        // correctly enabled or disabled.
-        if (savedInstanceState.keySet().contains(REQUESTING_LOCATION_UPDATES_KEY)) {
-            mRequestingLocationUpdates = savedInstanceState.getBoolean(
-                    REQUESTING_LOCATION_UPDATES_KEY);
-        }
+        if (savedInstanceState != null) {
+            // Update the value of mRequestingLocationUpdates from the Bundle, and
+            // make sure that the Start Updates and Stop Updates buttons are
+            // correctly enabled or disabled.
+            if (savedInstanceState.keySet().contains(REQUESTING_LOCATION_UPDATES_KEY)) {
+                mRequestingLocationUpdates = savedInstanceState.getBoolean(
+                        REQUESTING_LOCATION_UPDATES_KEY);
+            }
 
-        // Update the value of mCurrentLocation from the Bundle and update the
-        // UI to show the correct latitude and longitude.
-        if (savedInstanceState.keySet().contains(LOCATION_KEY)) {
-            // Since LOCATION_KEY was found in the Bundle, we can be sure that
-            // mCurrentLocationis not null.
-            mCurrentLocation = savedInstanceState.getParcelable(LOCATION_KEY);
-        }
+            // Update the value of mCurrentLocation from the Bundle and update the
+            // UI to show the correct latitude and longitude.
+            if (savedInstanceState.keySet().contains(LOCATION_KEY)) {
+                // Since LOCATION_KEY was found in the Bundle, we can be sure that
+                // mCurrentLocationis not null.
+                mCurrentLocation = savedInstanceState.getParcelable(LOCATION_KEY);
+            }
 
-        // Update the value of mLastUpdateTime from the Bundle and update the UI.
-        if (savedInstanceState.keySet().contains(LAST_UPDATED_TIME_STRING_KEY)) {
-            mLastUpdateTime = savedInstanceState.getString(
-                    LAST_UPDATED_TIME_STRING_KEY);
+            // Update the value of mLastUpdateTime from the Bundle and update the UI.
+            if (savedInstanceState.keySet().contains(LAST_UPDATED_TIME_STRING_KEY)) {
+                mLastUpdateTime = savedInstanceState.getString(
+                        LAST_UPDATED_TIME_STRING_KEY);
+            }
         }
     }
-}
+
+    private static void deleteLocationFromFirebase() {
+        DatabaseReference ref = FirebaseDatabase.getInstance().getReference("locations");
+        FirebaseUser authUser = FirebaseAuth.getInstance().getCurrentUser();
+        GeoFire geoFire = new GeoFire(ref);
+        geoFire.removeLocation(authUser.getUid());
+    }
 }

@@ -4,23 +4,34 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
+import android.util.Log;
 import android.view.View;
 
 import com.facebook.FacebookSdk;
 import com.facebook.appevents.AppEventsLogger;
+import com.firebase.geofire.GeoFire;
+import com.firebase.geofire.GeoLocation;
 import com.firebase.ui.auth.AuthUI;
 import com.firebase.ui.auth.ui.ResultCodes;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
 
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
+import es.upm.dam2016g6.shout.Fragments.MyProfileFragment;
+import es.upm.dam2016g6.shout.Model.User;
 import es.upm.dam2016g6.shout.R;
 
 import static com.firebase.ui.auth.ui.AcquireEmailHelper.RC_SIGN_IN;
 
 public class LoginActivity extends AppCompatActivity {
+
+    private static final String TAG = "TAG_LoginActivity";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -57,6 +68,24 @@ public class LoginActivity extends AppCompatActivity {
 //            IdpResponse idpResponse = IdpResponse.fromResultIntent(data);
 //            String fbToken = idpResponse.getIdpToken();
 //            System.out.println("fbToken: " + fbToken);
+
+            // User is signed-in add or update the database to add him
+            // Create new User
+            DatabaseReference ref = FirebaseDatabase.getInstance().getReference("locations");
+            FirebaseUser authUser = FirebaseAuth.getInstance().getCurrentUser();
+            GeoFire geoFire = new GeoFire(ref);
+
+            User me = User.addNewUser(authUser.getUid(), authUser.getDisplayName());
+            geoFire.setLocation(me.getUserId(), new GeoLocation(0.0, 0.0), new GeoFire.CompletionListener() {
+                @Override
+                public void onComplete(String key, DatabaseError error) {
+                    if (error != null) {
+                        Log.d(LoginActivity.TAG, "There was an error saving the location to GeoFire: " + error);
+                    } else {
+                        Log.d(LoginActivity.TAG, "Location saved on server successfully!");
+                    }
+                }
+            });
             startActivity(new Intent(this, MainActivity.class));
 
             finish();
@@ -95,6 +124,7 @@ public class LoginActivity extends AppCompatActivity {
         presentFirebaseSignIn();
     }
 
+    // Present Firebase AuthUI logging view, with Facebook as only possible provider
     private void presentFirebaseSignIn() {
         FirebaseAuth auth = FirebaseAuth.getInstance();
 
@@ -114,6 +144,7 @@ public class LoginActivity extends AppCompatActivity {
 
     }
 
+    // Setup permissions needed for the app to access the user's facebook data
     private List<String> getFacebookPermission() {
         List<String> permissions = new ArrayList<>();
 

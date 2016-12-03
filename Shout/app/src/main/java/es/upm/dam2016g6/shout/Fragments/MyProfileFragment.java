@@ -7,7 +7,6 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -20,13 +19,8 @@ import com.facebook.FacebookSdk;
 import com.facebook.GraphRequest;
 import com.facebook.GraphResponse;
 import com.facebook.LoggingBehavior;
-import com.firebase.geofire.GeoFire;
-import com.firebase.geofire.GeoLocation;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
-import com.google.firebase.database.DatabaseError;
-import com.google.firebase.database.DatabaseReference;
-import com.google.firebase.database.FirebaseDatabase;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
@@ -35,7 +29,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 import es.upm.dam2016g6.shout.Model.FacebookLike;
-import es.upm.dam2016g6.shout.Model.User;
 import es.upm.dam2016g6.shout.R;
 import es.upm.dam2016g6.shout.Support.MyLikesRecyclerViewAdapter;
 
@@ -90,24 +83,6 @@ public class MyProfileFragment extends android.support.v4.app.Fragment {
 
         // Configure all views from profile
         loadUserData(mView);
-
-        // Create new User
-        DatabaseReference ref = FirebaseDatabase.getInstance().getReference("locations");
-        FirebaseUser authUser = FirebaseAuth.getInstance().getCurrentUser();
-        GeoFire geoFire = new GeoFire(ref);
-
-        User me = User.addNewUser(authUser.getUid(), authUser.getDisplayName());
-        geoFire.setLocation(me.getUserId(), new GeoLocation(0.0, 0.0), new GeoFire.CompletionListener() {
-            @Override
-            public void onComplete(String key, DatabaseError error) {
-                if (error != null) {
-                    Log.d(MyProfileFragment.TAG, "There was an error saving the location to GeoFire: " + error);
-                } else {
-                    Log.d(MyProfileFragment.TAG, "Location saved on server successfully!");
-                }
-            }
-        });
-
 
         return mView;
     }
