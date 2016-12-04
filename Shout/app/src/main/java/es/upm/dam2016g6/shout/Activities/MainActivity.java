@@ -1,4 +1,4 @@
-package es.upm.dam2016g6.shout.Activities;
+package es.upm.dam2016g6.shout.activities;
 
 import android.Manifest;
 import android.content.Intent;
@@ -42,10 +42,10 @@ import com.roughike.bottombar.OnTabSelectListener;
 import java.text.DateFormat;
 import java.util.Date;
 
-import es.upm.dam2016g6.shout.Fragments.ChatRoomsFragment;
-import es.upm.dam2016g6.shout.Fragments.DiscoveryFragment;
-import es.upm.dam2016g6.shout.Fragments.MyProfileFragment;
-import es.upm.dam2016g6.shout.Fragments.PrivateConversationsFragment;
+import es.upm.dam2016g6.shout.fragments.ChatRoomsFragment;
+import es.upm.dam2016g6.shout.fragments.DiscoveryFragment;
+import es.upm.dam2016g6.shout.fragments.MyProfileFragment;
+import es.upm.dam2016g6.shout.fragments.PrivateConversationsFragment;
 import es.upm.dam2016g6.shout.R;
 
 public class MainActivity extends AppCompatActivity
@@ -146,6 +146,11 @@ public class MainActivity extends AppCompatActivity
                                 finish();
                             }
                         });
+                return true;
+
+            case R.id.action_new_chat_rroms:
+                startActivity(new Intent(this, ChatRoomCreation.class));
+                finish();
                 return true;
 
             default:
@@ -259,6 +264,7 @@ public class MainActivity extends AppCompatActivity
     protected void stopLocationUpdates() {
         LocationServices.FusedLocationApi.removeLocationUpdates(
                 mGoogleApiClient, this);
+        mRequestingLocationUpdates = false;
     }
 
     @Override

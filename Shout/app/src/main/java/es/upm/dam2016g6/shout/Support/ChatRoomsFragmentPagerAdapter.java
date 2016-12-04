@@ -1,13 +1,13 @@
-package es.upm.dam2016g6.shout.Support;
+package es.upm.dam2016g6.shout.support;
 
 import android.content.Context;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
 
-import es.upm.dam2016g6.shout.Fragments.InvitationsFragment;
-import es.upm.dam2016g6.shout.Fragments.MyChatRoomsFragment;
-import es.upm.dam2016g6.shout.Fragments.NearbyChatRoomsFragment;
+import es.upm.dam2016g6.shout.fragments.InvitationsFragment;
+import es.upm.dam2016g6.shout.fragments.MyChatRoomsFragment;
+import es.upm.dam2016g6.shout.fragments.NearbyChatRoomsFragment;
 
 /**
  * Created by pthalamy on 4/12/16.

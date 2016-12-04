@@ -1,4 +1,4 @@
-package es.upm.dam2016g6.shout.Fragments;
+package es.upm.dam2016g6.shout.fragments;
 
 
 import android.app.Fragment;

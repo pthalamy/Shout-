@@ -1,4 +1,4 @@
-package es.upm.dam2016g6.shout.Activities;
+package es.upm.dam2016g6.shout.activities;
 
 import android.content.Intent;
 import android.os.Bundle;
@@ -23,8 +23,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-import es.upm.dam2016g6.shout.Fragments.MyProfileFragment;
-import es.upm.dam2016g6.shout.Model.User;
+import es.upm.dam2016g6.shout.model.User;
 import es.upm.dam2016g6.shout.R;
 
 import static com.firebase.ui.auth.ui.AcquireEmailHelper.RC_SIGN_IN;
@@ -47,7 +46,7 @@ public class LoginActivity extends AppCompatActivity {
             // already signed in
             System.out.println("User already signed in.");
             startActivity(new Intent(this, MainActivity.class));
-            finish();
+//            finish();
         } else {
             // not signed in
             System.out.println("User not signed in.");

@@ -20,4 +20,12 @@
     <string name="fb_profile_picture">facebook_profile_picture</string>
     <string name="my_fb_likes_label">My Facebook Likes:</string>
     <string name="title_activity_discovery">Discovery</string>
+    <string name="create_room">Create Room</string>
+    <string name="crc_title">Title:</string>
+    <string name="crc_header">New Chat Room</string>
+    <string name="crc_category">Category:</string>
+    <string name="crc_image">Image:</string>
+    <string name="crc_range">Range:</string>
+    <string name="crc_create">Create</string>
+    <string name="crc_ttl">TimeToLive:</string>
 </resources>

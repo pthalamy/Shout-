@@ -1,4 +1,4 @@
-package es.upm.dam2016g6.shout.Model;
+package es.upm.dam2016g6.shout.model;
 
 import com.firebase.geofire.GeoLocation;
 import com.google.firebase.database.DatabaseReference;
