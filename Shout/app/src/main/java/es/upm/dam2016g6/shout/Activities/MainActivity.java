@@ -65,6 +65,8 @@ public class MainActivity extends AppCompatActivity
     private Location mCurrentLocation;
     private String mLastUpdateTime;
 
+    private Fragment fragment;
+
     // Store to speed up location updates //
     private GeoFire geoFire;
     private String userId;
@@ -88,25 +90,23 @@ public class MainActivity extends AppCompatActivity
         geoFire = new GeoFire(FirebaseDatabase.getInstance().getReference("locations"));
         userId = FirebaseAuth.getInstance().getCurrentUser().getUid();
 
-        if (savedInstanceState != null) {
-            updateValuesFromBundle(savedInstanceState);
-            return;
-        }
+//        if (savedInstanceState != null) {
+//            updateValuesFromBundle(savedInstanceState);
+//            return;
+//        }
 
         // Set up bottom bar if not previously done
         bottomBar.setOnTabSelectListener(new OnTabSelectListener() {
             @Override
             public void onTabSelected(@IdRes int tabId) {
-                Fragment fragment = null;
+                MainActivity.this.fragment = null;
 
                 if (tabId == R.id.tab_map) {
                     fragment = new DiscoveryFragment();
                 } else if (tabId == R.id.tab_chatrooms) {
                     fragment = new ChatRoomsFragment();
-
                 } else if (tabId == R.id.tab_pm) {
                     fragment = new PrivateConversationsFragment();
-
                 } else { // tabProfile
                     fragment = new MyProfileFragment();
                 }
@@ -123,7 +123,10 @@ public class MainActivity extends AppCompatActivity
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
-        this.getMenuInflater().inflate(R.menu.my_profile_menu, menu);
+        if (fragment instanceof MyProfileFragment)
+            this.getMenuInflater().inflate(R.menu.my_profile_menu, menu);
+        else if (fragment instanceof ChatRoomsFragment)
+            this.getMenuInflater().inflate(R.menu.chat_rooms_menu, menu);
 
         return true;
     }
@@ -285,39 +288,39 @@ public class MainActivity extends AppCompatActivity
                 + ", " + location.getLongitude() + ")");
     }
 
-    public void onSaveInstanceState(Bundle savedInstanceState) {
-        savedInstanceState.putBoolean(REQUESTING_LOCATION_UPDATES_KEY,
-                mRequestingLocationUpdates);
-        savedInstanceState.putParcelable(LOCATION_KEY, mCurrentLocation);
-        savedInstanceState.putString(LAST_UPDATED_TIME_STRING_KEY, mLastUpdateTime);
-        super.onSaveInstanceState(savedInstanceState);
-    }
-
-    private void updateValuesFromBundle(Bundle savedInstanceState) {
-        if (savedInstanceState != null) {
-            // Update the value of mRequestingLocationUpdates from the Bundle, and
-            // make sure that the Start Updates and Stop Updates buttons are
-            // correctly enabled or disabled.
-            if (savedInstanceState.keySet().contains(REQUESTING_LOCATION_UPDATES_KEY)) {
-                mRequestingLocationUpdates = savedInstanceState.getBoolean(
-                        REQUESTING_LOCATION_UPDATES_KEY);
-            }
-
-            // Update the value of mCurrentLocation from the Bundle and update the
-            // UI to show the correct latitude and longitude.
-            if (savedInstanceState.keySet().contains(LOCATION_KEY)) {
-                // Since LOCATION_KEY was found in the Bundle, we can be sure that
-                // mCurrentLocationis not null.
-                mCurrentLocation = savedInstanceState.getParcelable(LOCATION_KEY);
-            }
-
-            // Update the value of mLastUpdateTime from the Bundle and update the UI.
-            if (savedInstanceState.keySet().contains(LAST_UPDATED_TIME_STRING_KEY)) {
-                mLastUpdateTime = savedInstanceState.getString(
-                        LAST_UPDATED_TIME_STRING_KEY);
-            }
-        }
-    }
+//    public void onSaveInstanceState(Bundle savedInstanceState) {
+//        savedInstanceState.putBoolean(REQUESTING_LOCATION_UPDATES_KEY,
+//                mRequestingLocationUpdates);
+//        savedInstanceState.putParcelable(LOCATION_KEY, mCurrentLocation);
+//        savedInstanceState.putString(LAST_UPDATED_TIME_STRING_KEY, mLastUpdateTime);
+//        super.onSaveInstanceState(savedInstanceState);
+//    }
+//
+//    private void updateValuesFromBundle(Bundle savedInstanceState) {
+//        if (savedInstanceState != null) {
+//            // Update the value of mRequestingLocationUpdates from the Bundle, and
+//            // make sure that the Start Updates and Stop Updates buttons are
+//            // correctly enabled or disabled.
+//            if (savedInstanceState.keySet().contains(REQUESTING_LOCATION_UPDATES_KEY)) {
+//                mRequestingLocationUpdates = savedInstanceState.getBoolean(
+//                        REQUESTING_LOCATION_UPDATES_KEY);
+//            }
+//
+//            // Update the value of mCurrentLocation from the Bundle and update the
+//            // UI to show the correct latitude and longitude.
+//            if (savedInstanceState.keySet().contains(LOCATION_KEY)) {
+//                // Since LOCATION_KEY was found in the Bundle, we can be sure that
+//                // mCurrentLocationis not null.
+//                mCurrentLocation = savedInstanceState.getParcelable(LOCATION_KEY);
+//            }
+//
+//            // Update the value of mLastUpdateTime from the Bundle and update the UI.
+//            if (savedInstanceState.keySet().contains(LAST_UPDATED_TIME_STRING_KEY)) {
+//                mLastUpdateTime = savedInstanceState.getString(
+//                        LAST_UPDATED_TIME_STRING_KEY);
+//            }
+//        }
+//    }
 
     private static void deleteLocationFromFirebase() {
         DatabaseReference ref = FirebaseDatabase.getInstance().getReference("locations");

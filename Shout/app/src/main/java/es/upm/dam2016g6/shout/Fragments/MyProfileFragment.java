@@ -77,7 +77,7 @@ public class MyProfileFragment extends android.support.v4.app.Fragment {
         mView =  inflater.inflate(R.layout.fragment_my_profile, container, false);
 
         // Add toolbar to fragment (contains logout button)
-        Toolbar toolbar = (Toolbar) mView.findViewById(R.id.toolbar);
+        Toolbar toolbar = (Toolbar) mView.findViewById(R.id.toolbar_my_profile);
         toolbar.setTitle("My Profile");
         ((AppCompatActivity)getActivity()).setSupportActionBar(toolbar);
 

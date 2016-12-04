@@ -13,7 +13,7 @@
         android:layout_height="wrap_content"
         android:id="@+id/tv_welcome"
         android:layout_centerHorizontal="true"
-        android:layout_below="@+id/toolbar"
+        android:layout_below="@+id/toolbar_my_profile"
         android:layout_marginTop="15dp"
         android:textStyle="normal|bold"
         android:textSize="20sp"
@@ -45,7 +45,7 @@
         android:textColor="@color/authui_colorActivated"/>
 
     <android.support.v7.widget.Toolbar
-        android:id="@+id/toolbar"
+        android:id="@+id/toolbar_my_profile"
         android:layout_width="match_parent"
         android:layout_height="?attr/actionBarSize"
         android:background="?attr/colorPrimary"
