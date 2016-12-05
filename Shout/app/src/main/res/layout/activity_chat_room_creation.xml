@@ -5,7 +5,7 @@
     android:id="@+id/activity_chat_room_creation"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context="es.upm.dam2016g6.shout.activities.ChatRoomCreation"
+    tools:context="es.upm.dam2016g6.shout.activities.ChatRoomCreationActivity"
     android:windowSoftInputMode="adjustResize">
 
     <android.support.v7.widget.Toolbar
@@ -55,7 +55,7 @@
         android:layout_height="wrap_content"
         android:layout_marginTop="72dp"
         android:id="@+id/tv_crc_thumbnail"
-        android:layout_below="@+id/lv_crc_categories"
+        android:layout_below="@+id/sp_crc_categories"
         android:layout_alignStart="@+id/tv_crc_category" />
 
     <TextView
@@ -64,17 +64,17 @@
         android:layout_height="wrap_content"
         android:layout_marginTop="34dp"
         android:id="@+id/tv_crc_range"
-        android:layout_below="@+id/imageButton"
+        android:layout_below="@+id/ib_crc_thumbnail"
         android:layout_alignEnd="@+id/tv_crc_thumbnail" />
 
     <ImageButton
         app:srcCompat="@drawable/ic_shoutlogo"
-        android:id="@+id/imageButton"
+        android:id="@+id/ib_crc_thumbnail"
         android:layout_width="250dp"
         android:layout_height="150dp"
         android:layout_marginTop="11dp"
-        android:layout_below="@+id/lv_crc_categories"
-        android:layout_alignStart="@+id/lv_crc_categories"
+        android:layout_below="@+id/sp_crc_categories"
+        android:layout_alignStart="@+id/sp_crc_categories"
         android:layout_marginStart="13dp"
         android:elevation="20dp" />
 
@@ -82,11 +82,11 @@
         android:layout_height="wrap_content"
         android:id="@+id/sb_crc_range"
         android:layout_alignTop="@+id/tv_crc_range"
-        android:layout_alignEnd="@+id/lv_crc_categories"
+        android:layout_alignEnd="@+id/sp_crc_categories"
         android:layout_width="200dp" />
 
-    <ExpandableListView
-        android:id="@+id/lv_crc_categories"
+    <Spinner
+        android:id="@+id/sp_crc_categories"
         android:layout_height="50dp"
         android:layout_marginTop="18dp"
         android:layout_width="280dp"
@@ -130,7 +130,8 @@
         android:layout_marginTop="20dp"
         android:id="@+id/tv_crc_ttl"
         android:layout_below="@+id/tv_crc_range_count"
-        android:layout_alignStart="@+id/tv_crc_range" />
+        android:layout_alignStart="@+id/tv_crc_range"
+        android:maxLength="30"/>
 
     <Button
         android:text="@string/crc_create"
@@ -142,17 +143,19 @@
         android:layout_toEndOf="@+id/tv_crc_header"
         android:layout_marginStart="27dp"
         style="@style/Widget.AppCompat.Button.Borderless.Colored"
-        android:textColor="@color/authui_colorPrimary" />
+        android:textColor="@color/authui_colorPrimary"
+        android:onClick="createChatRoomIfValid"/>
 
     <Button
-        android:text="Cancel"
+        android:text="@string/cancel"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:id="@+id/bt_crc_cancel"
         style="@style/Widget.AppCompat.Button.Borderless.Colored"
         android:layout_alignBaseline="@+id/bt_crc_create"
         android:layout_alignBottom="@+id/bt_crc_create"
-        android:layout_toStartOf="@+id/sb_crc_ttl" />
+        android:layout_toStartOf="@+id/sb_crc_ttl"
+        android:onClick="cancelCreation"/>
 
     <SeekBar
         android:layout_height="wrap_content"

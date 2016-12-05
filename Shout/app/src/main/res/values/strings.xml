@@ -28,4 +28,22 @@
     <string name="crc_range">Range:</string>
     <string name="crc_create">Create</string>
     <string name="crc_ttl">TimeToLive:</string>
+    <string name="crc_cancel_dialog_message">Are you sure that you want to cancel the creation of the chat room ?</string>
+    <string name="crc_cancel_dialog_title">Cancel Creation?</string>
+    <string name="yes">Yes</string>
+    <string name="confirm">Confirm</string>
+    <string name="cancel">Cancel</string>
+    <string name="ok">ok</string>
+    <string name="crc_form_incomplete">Please ensure that all fields have been completed and try again.</string>
+    <string name="crc_form_incomplete_title">Missing Information</string>
+
+    <string-array name="categories_array">
+        <item></item>
+        <item>Events</item>
+        <item>Games</item>
+        <item>Movies</item>
+        <item>Sports</item>
+        <item>Music</item>
+        <item>Other</item>
+    </string-array>
 </resources>

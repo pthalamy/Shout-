@@ -148,8 +148,8 @@ public class MainActivity extends AppCompatActivity
                         });
                 return true;
 
-            case R.id.action_new_chat_rroms:
-                startActivity(new Intent(this, ChatRoomCreation.class));
+            case R.id.action_new_chat_rooms:
+                startActivity(new Intent(this, ChatRoomCreationActivity.class));
                 finish();
                 return true;
 
