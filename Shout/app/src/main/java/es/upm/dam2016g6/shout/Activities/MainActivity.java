@@ -35,18 +35,18 @@ import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DatabaseReference;
-import com.google.firebase.database.FirebaseDatabase;
 import com.roughike.bottombar.BottomBar;
 import com.roughike.bottombar.OnTabSelectListener;
 
 import java.text.DateFormat;
 import java.util.Date;
 
+import es.upm.dam2016g6.shout.R;
 import es.upm.dam2016g6.shout.fragments.ChatRoomsFragment;
 import es.upm.dam2016g6.shout.fragments.DiscoveryFragment;
 import es.upm.dam2016g6.shout.fragments.MyProfileFragment;
 import es.upm.dam2016g6.shout.fragments.PrivateConversationsFragment;
-import es.upm.dam2016g6.shout.R;
+import es.upm.dam2016g6.shout.support.Utils;
 
 public class MainActivity extends AppCompatActivity
         implements MyProfileFragment.OnProfileInteractionListener,
@@ -87,7 +87,7 @@ public class MainActivity extends AppCompatActivity
                     .build();
         }
 
-        geoFire = new GeoFire(FirebaseDatabase.getInstance().getReference("locations"));
+        geoFire = new GeoFire(Utils.getDatabase().getReference("locations"));
         userId = FirebaseAuth.getInstance().getCurrentUser().getUid();
 
 //        if (savedInstanceState != null) {
@@ -135,7 +135,8 @@ public class MainActivity extends AppCompatActivity
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
             case R.id.action_logout:
-                deleteLocationFromFirebase();
+                FirebaseUser authUser = FirebaseAuth.getInstance().getCurrentUser();
+                deleteLocationFromFirebase(authUser.getUid());
                 AuthUI.getInstance()
                         .signOut(this)
                         .addOnCompleteListener(new OnCompleteListener<Void>() {
@@ -222,7 +223,6 @@ public class MainActivity extends AppCompatActivity
     @Override
     protected void onStop() {
         mGoogleApiClient.disconnect();
-        deleteLocationFromFirebase();
         super.onStop();
     }
 
@@ -328,10 +328,9 @@ public class MainActivity extends AppCompatActivity
 //        }
 //    }
 
-    private static void deleteLocationFromFirebase() {
-        DatabaseReference ref = FirebaseDatabase.getInstance().getReference("locations");
-        FirebaseUser authUser = FirebaseAuth.getInstance().getCurrentUser();
+    private static void deleteLocationFromFirebase(String uid) {
+        DatabaseReference ref = Utils.getDatabase().getReference("locations");
         GeoFire geoFire = new GeoFire(ref);
-        geoFire.removeLocation(authUser.getUid());
+        geoFire.removeLocation(uid);
     }
 }

@@ -1,9 +1,21 @@
 package es.upm.dam2016g6.shout.model;
 
+import android.util.Log;
+
 import com.firebase.geofire.GeoLocation;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
-import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.Exclude;
 import com.google.firebase.database.IgnoreExtraProperties;
+import com.google.firebase.database.Query;
+import com.google.firebase.database.ValueEventListener;
+
+import java.util.LinkedList;
+import java.util.List;
+
+import es.upm.dam2016g6.shout.support.Utils;
 
 /**
  * Created by pthalamy on 28/11/16.
@@ -11,52 +23,62 @@ import com.google.firebase.database.IgnoreExtraProperties;
 
 @IgnoreExtraProperties
 public class User {
+    private static final String TAG = "TAG_User";
+    private static User currentUser = null;
 
-    private static User userMe;
-
-    private String userId;
-    private String name;
-    private GeoLocation location = null;
+    public String uid;
+    public String name;
+    public String facebookId;
+    public GeoLocation location = null;
+    public List<String> userChatroomsUids = new LinkedList<>();
 
     public User() {
         // Default constructor required for calls to DataSnapshot.getValue(User.class)
     }
 
-    public User(String userId, String name) {
-        this.userId = userId;
+    public User(String uid, String name, String facebookId) {
+        this.uid = uid;
         this.name = name;
+        this.facebookId = facebookId;
     }
 
-    public static User addNewUser(String userId, String name) {
-        User user = new User(userId, name);
+    @Exclude
+    public static User writeNewUser(String uid, String name, String facebookId) {
+        User user = new User(uid, name, facebookId);
 
-        DatabaseReference ref = FirebaseDatabase.getInstance().getReference();
-        ref.child("users").child(userId).setValue(user);
+        DatabaseReference ref = Utils.getDatabase().getReference("users");
+        ref.child(uid).setValue(user);
 
         return user;
     }
 
-    public String getUserId() {
-        return userId;
+    // Singleton current user getter, must be called once before use,
+    //  Otherwise currentUser will not have been fetched from database
+    @Exclude
+    public static User getCurrentUser() {
+        if (currentUser != null)
+            return currentUser;
+
+        DatabaseReference ref = Utils.getDatabase().getReference("users");
+        Query query = ref.orderByKey().equalTo(FirebaseAuth.getInstance().getCurrentUser().getUid());
+        query.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                Log.d(TAG, "onDataChange:" + dataSnapshot.getKey());
+                currentUser = dataSnapshot.getValue(User.class);
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+                Log.w(TAG, "onCancelled:" + databaseError.toException());
+            }
+        });
+
+        return currentUser;
     }
 
-    public void setUserId(String userId) {
-        this.userId = userId;
+    public List<String> getUserChatroomsUids() {
+        return userChatroomsUids;
     }
 
-    public String getName() {
-        return name;
-    }
-
-    public void setName(String name) {
-        this.name = name;
-    }
-
-    public GeoLocation getLocation() {
-        return location;
-    }
-
-    public void setLocation(GeoLocation location) {
-        this.location = location;
-    }
 }

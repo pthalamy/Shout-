@@ -17,7 +17,10 @@ import android.widget.SeekBar;
 import android.widget.Spinner;
 import android.widget.TextView;
 
+import com.google.firebase.auth.FirebaseAuth;
+
 import es.upm.dam2016g6.shout.R;
+import es.upm.dam2016g6.shout.model.ChatRoom;
 
 public class ChatRoomCreationActivity extends AppCompatActivity
         implements AdapterView.OnItemSelectedListener {
@@ -64,6 +67,7 @@ public class ChatRoomCreationActivity extends AppCompatActivity
         sp_categories.setAdapter(adapter);
         sp_categories.setOnItemSelectedListener(this);
         ib_thumbnailPicker = (ImageButton) findViewById(R.id.ib_crc_thumbnail);
+        // TODO: 5/12/16 HANDLE IMAGE UPLOAD
         tv_range = (TextView) findViewById(R.id.tv_crc_range_count);
         tv_ttl = (TextView) findViewById(R.id.tv_crc_ttl_count);
 
@@ -100,7 +104,10 @@ public class ChatRoomCreationActivity extends AppCompatActivity
     public void createChatRoomIfValid(View view) {
         Log.d(TAG, "onClick: createChatRoomIfValid");
         if (creationFormIsComplete()) {
-
+            // Create chat room
+            ChatRoom chatroom = ChatRoom.writeNewChatRoom(et_title.getText().toString(), category, null,
+                    range, ttl, FirebaseAuth.getInstance().getCurrentUser().getUid());
+            finish();
         } else {
             // 1. Instantiate an AlertDialog.Builder with its constructor
             AlertDialog.Builder builder = new AlertDialog.Builder(this);
