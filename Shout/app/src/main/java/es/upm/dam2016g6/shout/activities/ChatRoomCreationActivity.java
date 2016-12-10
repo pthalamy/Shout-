@@ -1,13 +1,16 @@
 package es.upm.dam2016g6.shout.activities;
 
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.media.Image;
 import android.os.Bundle;
+import android.support.v4.app.NavUtils;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
@@ -107,6 +110,10 @@ public class ChatRoomCreationActivity extends AppCompatActivity
             // Create chat room
             ChatRoom chatroom = ChatRoom.writeNewChatRoom(et_title.getText().toString(), category, null,
                     range, ttl, FirebaseAuth.getInstance().getCurrentUser().getUid());
+
+            Intent upIntent = NavUtils.getParentActivityIntent(ChatRoomCreationActivity.this);
+            upIntent.putExtra(MainActivity.FRAGMENT_TO_INFLATE, MainActivity.CHATROOMS_FRAGMENT_CREATION);
+
             finish();
         } else {
             // 1. Instantiate an AlertDialog.Builder with its constructor
@@ -135,6 +142,8 @@ public class ChatRoomCreationActivity extends AppCompatActivity
         builder.setPositiveButton(R.string.confirm, new DialogInterface.OnClickListener() {
             public void onClick(DialogInterface dialog, int id) {
                 // User clicked OK button
+                Intent upIntent = NavUtils.getParentActivityIntent(ChatRoomCreationActivity.this);
+                upIntent.putExtra(MainActivity.FRAGMENT_TO_INFLATE, MainActivity.CHATROOMS_FRAGMENT_CREATION);
                 ChatRoomCreationActivity.this.finish();
             }
         });
@@ -148,6 +157,23 @@ public class ChatRoomCreationActivity extends AppCompatActivity
         // 3. Get the AlertDialog from create()
         AlertDialog dialog = builder.create();
         dialog.show();
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+            // Respond to the action bar's Up/Home button
+            case android.R.id.home:
+                Intent upIntent = NavUtils.getParentActivityIntent(this);
+                // This activity is part of this app's task, so simply
+                // navigate up to the logical parent activity.
+                upIntent.putExtra(MainActivity.FRAGMENT_TO_INFLATE, MainActivity.CHATROOMS_FRAGMENT_CREATION);
+                NavUtils.navigateUpTo(this, upIntent);
+                finish();
+                return true;
+        }
+
+        return super.onOptionsItemSelected(item);
     }
 
     protected boolean creationFormIsComplete() {

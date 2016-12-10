@@ -58,6 +58,9 @@ public class MainActivity extends AppCompatActivity
     private static final String REQUESTING_LOCATION_UPDATES_KEY = "RLUK_MainActivity";
     private static final String LOCATION_KEY = "LK_MainActivity";
     private static final String LAST_UPDATED_TIME_STRING_KEY = "LUTSK_MainActivity";
+    public static final String DISCOVERY_FRAGMENT = "DISCOVERY_FRAGMENT";
+    public static final String CHATROOMS_FRAGMENT_CREATION = "CHATROOMS_FRAGMENT_CREATE";
+    public static final String FRAGMENT_TO_INFLATE = "FRAGMENT_TO_INFLATE";
 
     private boolean mRequestingLocationUpdates = true;
     private LocationRequest mLocationRequest;
@@ -115,6 +118,18 @@ public class MainActivity extends AppCompatActivity
             }
         });
 
+        Intent intent = getIntent();
+        String param = intent.getStringExtra(MainActivity.FRAGMENT_TO_INFLATE);
+        if (param != null) {
+            switch(param) {
+                case CHATROOMS_FRAGMENT_CREATION:
+                    bottomBar.selectTabAtPosition(1);
+                    break;
+                default:
+                    bottomBar.selectTabAtPosition(0);
+            }
+        }
+
         // Set up location requests for location updates
         createLocationRequest();
     }
@@ -151,7 +166,6 @@ public class MainActivity extends AppCompatActivity
 
             case R.id.action_new_chat_rooms:
                 startActivity(new Intent(this, ChatRoomCreationActivity.class));
-                finish();
                 return true;
 
             default:

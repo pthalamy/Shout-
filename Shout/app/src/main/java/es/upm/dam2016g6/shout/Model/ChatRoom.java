@@ -68,11 +68,12 @@ public class ChatRoom {
         ChatRoom chatroom = new ChatRoom(key, title, category, imageUrl, range, ttl, creatorUid);
 
         Log.d(TAG, "User " + creatorUid + " created new chatroom: " + key);
+        DatabaseReference mRef = Utils.getDatabase().getReference();
 
         Map<String, Object> childUpdates = new HashMap<>();
         childUpdates.put("/chatrooms/" + key, chatroom);
-        childUpdates.put("/users/" + creatorUid + "/userChatroomsUids/", key);
-        Utils.getDatabase().getReference().updateChildren(childUpdates);
+        mRef.updateChildren(childUpdates);
+        mRef.child("/users/" + creatorUid + "/userChatroomsUids/" + key).setValue(true);
 
         return chatroom;
     }
