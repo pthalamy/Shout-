@@ -5,6 +5,8 @@ import android.app.Fragment;
 import android.content.pm.PackageManager;
 import android.os.Bundle;
 import android.support.v4.app.ActivityCompat;
+import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.Toolbar;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -32,6 +34,11 @@ public class DiscoveryFragment extends android.support.v4.app.Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View rootView = inflater.inflate(R.layout.fragment_discovery, container, false);
+
+         // Add toolbar to fragment (contains logout button)
+        Toolbar toolbar = (Toolbar) rootView.findViewById(R.id.toolbar_discovery);
+        toolbar.setTitle("Discovery");
+        ((AppCompatActivity)getActivity()).setSupportActionBar(toolbar);
 
         mMapView = (MapView) rootView.findViewById(R.id.mapView);
         mMapView.onCreate(savedInstanceState);
