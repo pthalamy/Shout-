@@ -24,11 +24,10 @@ import es.upm.dam2016g6.shout.R;
 import es.upm.dam2016g6.shout.model.User;
 import es.upm.dam2016g6.shout.support.Utils;
 
-import static com.firebase.ui.auth.ui.AcquireEmailHelper.RC_SIGN_IN;
-
 public class LoginActivity extends AppCompatActivity {
 
     private static final String TAG = "TAG_LoginActivity";
+    private static final int RC_SIGN_IN = 777;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -128,7 +127,7 @@ public class LoginActivity extends AppCompatActivity {
                         .createSignInIntentBuilder()
                         .setProviders(Arrays.asList(facebookIdp))
                         .setLogo(R.drawable.ic_shoutlogo)
-                        .setIsSmartLockEnabled(true)
+                        .setIsSmartLockEnabled(false)
                         .build(),
                 RC_SIGN_IN);
 
