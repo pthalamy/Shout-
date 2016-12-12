@@ -9,8 +9,10 @@
         android:id="@+id/rv_nearby_chat_rooms"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
+        android:layout_marginTop="4dp"
         android:layout_marginLeft="8dp"
         android:layout_marginRight="8dp"
-        android:background="@color/white"/>
+        android:background="@color/white"
+        />
 
 </FrameLayout>

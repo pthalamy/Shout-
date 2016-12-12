@@ -97,6 +97,7 @@
         android:layout_height="wrap_content"
         android:inputType="textPersonName"
         android:ems="10"
+        android:maxLength="18"
         android:id="@+id/tf_crc_title"
         android:layout_width="280dp"
         android:layout_alignBaseline="@+id/tv_crc_title"
@@ -130,8 +131,7 @@
         android:layout_marginTop="20dp"
         android:id="@+id/tv_crc_ttl"
         android:layout_below="@+id/tv_crc_range_count"
-        android:layout_alignStart="@+id/tv_crc_range"
-        android:maxLength="30"/>
+        android:layout_alignStart="@+id/tv_crc_range" />
 
     <Button
         android:text="@string/crc_create"
