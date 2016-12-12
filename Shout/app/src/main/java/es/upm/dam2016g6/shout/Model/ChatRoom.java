@@ -12,8 +12,6 @@ import com.google.firebase.database.IgnoreExtraProperties;
 
 import java.util.Date;
 import java.util.HashMap;
-import java.util.LinkedList;
-import java.util.List;
 import java.util.Map;
 
 import es.upm.dam2016g6.shout.support.Utils;
@@ -39,7 +37,7 @@ public class ChatRoom {
     public String creatorUid;
     private GeoLocation location; // Turn public for serialization?
     public int range;
-    public List<String> usersUids = new LinkedList<>();
+    public Map<String, Boolean> usersUids = new HashMap<>();
 
     public ChatRoom() {
         // Default constructor required for calls to DataSnapshot.getValue(User.class)
@@ -58,7 +56,7 @@ public class ChatRoom {
         long expirationDateEpoch = creationDate.getTime() + ttl * 3600 * 1000;
         this.expirationDate = new Date(expirationDateEpoch);
         this.creatorUid = User.getCurrentUser().uid;
-        usersUids.add(creatorUid);
+        usersUids.put(creatorUid, true);
     }
 
     @Exclude

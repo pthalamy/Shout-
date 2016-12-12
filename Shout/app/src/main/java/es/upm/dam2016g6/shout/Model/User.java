@@ -12,8 +12,8 @@ import com.google.firebase.database.IgnoreExtraProperties;
 import com.google.firebase.database.Query;
 import com.google.firebase.database.ValueEventListener;
 
-import java.util.LinkedList;
-import java.util.List;
+import java.util.HashMap;
+import java.util.Map;
 
 import es.upm.dam2016g6.shout.support.Utils;
 
@@ -30,7 +30,7 @@ public class User {
     public String name;
     public String facebookId;
     public GeoLocation location = null;
-    public List<String> userChatroomsUids = new LinkedList<>();
+    public Map<String, Boolean> userChatroomsUids = new HashMap<>();
 
     public User() {
         // Default constructor required for calls to DataSnapshot.getValue(User.class)
@@ -77,7 +77,7 @@ public class User {
         return currentUser;
     }
 
-    public List<String> getUserChatroomsUids() {
+    public Map<String, Boolean> getUserChatroomsUids() {
         return userChatroomsUids;
     }
 
