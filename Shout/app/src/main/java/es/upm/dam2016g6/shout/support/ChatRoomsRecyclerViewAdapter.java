@@ -1,8 +1,12 @@
 package es.upm.dam2016g6.shout.support;
 
+import com.bumptech.glide.Glide;
 import com.firebase.ui.database.FirebaseRecyclerAdapter;
 import com.google.firebase.database.Query;
 
+import java.util.Date;
+
+import es.upm.dam2016g6.shout.R;
 import es.upm.dam2016g6.shout.model.ChatRoom;
 
 /**
@@ -26,6 +30,21 @@ public class ChatRoomsRecyclerViewAdapter extends FirebaseRecyclerAdapter<ChatRo
 
     @Override
     protected void populateViewHolder(ChatRoomViewHolder viewHolder, ChatRoom chatroom, int position) {
+        // Set title and categories
         viewHolder.tv_title.setText(chatroom.title);
+        viewHolder.tv_category.setText(chatroom.category);
+
+        // Get number of hours from creation and until expiration
+        Date now = new Date();
+        long numHoursSinceCreation = (now.getTime() - chatroom.creationDate.getTime()) / (1000 * 3600);
+        long numHoursToExpiration = (chatroom.expirationDate.getTime() - now.getTime()) / (1000 * 3600);
+        viewHolder.tv_created.setText("Created " + numHoursSinceCreation + "h ago");
+        viewHolder.tv_expires.setText("Expires in " + numHoursToExpiration + "h");
+
+        // Glide image in
+        Glide.with(viewHolder.context)
+                .load(chatroom.imageUrl)
+                .placeholder(R.drawable.ic_shoutlogo)
+                .into(viewHolder.imageView);
     }
 }

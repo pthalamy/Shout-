@@ -3,6 +3,7 @@ package es.upm.dam2016g6.shout.fragments;
 
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
@@ -52,7 +53,7 @@ public class NearbyChatRoomsFragment extends Fragment {
         // Store likes into a recycler view and configure it
         RecyclerView rv = (RecyclerView) this.mView.findViewById(R.id.rv_nearby_chat_rooms);
         rv.setHasFixedSize(true);
-        LinearLayoutManager layoutManager = new LinearLayoutManager(this.getActivity());
+        LinearLayoutManager layoutManager = new GridLayoutManager(this.getActivity(), 2);
         layoutManager.setOrientation(LinearLayoutManager.VERTICAL);
         rv.setLayoutManager(layoutManager);
 

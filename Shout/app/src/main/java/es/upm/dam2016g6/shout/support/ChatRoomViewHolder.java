@@ -1,5 +1,6 @@
 package es.upm.dam2016g6.shout.support;
 
+import android.content.Context;
 import android.support.v7.widget.RecyclerView;
 import android.view.View;
 import android.widget.Button;
@@ -13,6 +14,8 @@ import es.upm.dam2016g6.shout.R;
  */
 
 public class ChatRoomViewHolder extends RecyclerView.ViewHolder {
+    Context context;
+
     TextView tv_title;
     TextView tv_created;
     TextView tv_expires;
@@ -25,6 +28,14 @@ public class ChatRoomViewHolder extends RecyclerView.ViewHolder {
     public ChatRoomViewHolder(View itemView) {
         super(itemView);
 
+        context = itemView.getContext();
         tv_title = (TextView) itemView.findViewById(R.id.cicl_tv_title);
+        tv_created = (TextView) itemView.findViewById(R.id.cicl_tv_created);
+        tv_expires = (TextView) itemView.findViewById(R.id.cicl_tv_expires);
+//        tv_description = (TextView) itemView.findViewById(R.id.cicl_tv_description);
+        tv_category = (TextView) itemView.findViewById(R.id.cicl_tv_category);
+        bt_join = (Button) itemView.findViewById(R.id.cicl_bt_join);
+        bt_share = (Button) itemView.findViewById(R.id.cicl_bt_share);
+        imageView = (ImageView) itemView.findViewById(R.id.cicl_image);
     }
 }
