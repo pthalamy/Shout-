@@ -1,37 +1,33 @@
-package es.upm.dam2016g6.shout.Activities;
+package es.upm.dam2016g6.shout.activities;
 
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
-import android.util.Log;
 import android.view.View;
 
+import com.facebook.AccessToken;
 import com.facebook.FacebookSdk;
 import com.facebook.appevents.AppEventsLogger;
 import com.firebase.geofire.GeoFire;
-import com.firebase.geofire.GeoLocation;
 import com.firebase.ui.auth.AuthUI;
 import com.firebase.ui.auth.ui.ResultCodes;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
-import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
-import com.google.firebase.database.FirebaseDatabase;
 
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-import es.upm.dam2016g6.shout.Fragments.MyProfileFragment;
-import es.upm.dam2016g6.shout.Model.User;
 import es.upm.dam2016g6.shout.R;
-
-import static com.firebase.ui.auth.ui.AcquireEmailHelper.RC_SIGN_IN;
+import es.upm.dam2016g6.shout.model.User;
+import es.upm.dam2016g6.shout.support.Utils;
 
 public class LoginActivity extends AppCompatActivity {
 
     private static final String TAG = "TAG_LoginActivity";
+    private static final int RC_SIGN_IN = 777;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -39,13 +35,14 @@ public class LoginActivity extends AppCompatActivity {
 
         FacebookSdk.sdkInitialize(getApplicationContext());
         AppEventsLogger.activateApp(this);
-
+        
         setContentView(R.layout.activity_login);
 
         FirebaseAuth auth = FirebaseAuth.getInstance();
         if (auth.getCurrentUser() != null) {
             // already signed in
             System.out.println("User already signed in.");
+            User.getCurrentUser(); // Setup database callbacks
             startActivity(new Intent(this, MainActivity.class));
             finish();
         } else {
@@ -71,21 +68,13 @@ public class LoginActivity extends AppCompatActivity {
 
             // User is signed-in add or update the database to add him
             // Create new User
-            DatabaseReference ref = FirebaseDatabase.getInstance().getReference("locations");
+            DatabaseReference ref = Utils.getDatabase().getReference("locations");
             FirebaseUser authUser = FirebaseAuth.getInstance().getCurrentUser();
             GeoFire geoFire = new GeoFire(ref);
 
-            User me = User.addNewUser(authUser.getUid(), authUser.getDisplayName());
-            geoFire.setLocation(me.getUserId(), new GeoLocation(0.0, 0.0), new GeoFire.CompletionListener() {
-                @Override
-                public void onComplete(String key, DatabaseError error) {
-                    if (error != null) {
-                        Log.d(LoginActivity.TAG, "There was an error saving the location to GeoFire: " + error);
-                    } else {
-                        Log.d(LoginActivity.TAG, "Location saved on server successfully!");
-                    }
-                }
-            });
+            User me = User.writeNewUser(authUser.getUid(), authUser.getDisplayName(),
+                    AccessToken.getCurrentAccessToken().getUserId());
+            User.getCurrentUser();
             startActivity(new Intent(this, MainActivity.class));
 
             finish();
@@ -138,7 +127,7 @@ public class LoginActivity extends AppCompatActivity {
                         .createSignInIntentBuilder()
                         .setProviders(Arrays.asList(facebookIdp))
                         .setLogo(R.drawable.ic_shoutlogo)
-                        .setIsSmartLockEnabled(true)
+                        .setIsSmartLockEnabled(false)
                         .build(),
                 RC_SIGN_IN);
 

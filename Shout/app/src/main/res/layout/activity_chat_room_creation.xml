@@ -1,0 +1,167 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/activity_chat_room_creation"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context="es.upm.dam2016g6.shout.activities.ChatRoomCreationActivity"
+    android:windowSoftInputMode="adjustResize">
+
+    <android.support.v7.widget.Toolbar
+        android:id="@+id/toolbar_chat_room_creation"
+        android:layout_width="match_parent"
+        android:layout_height="?attr/actionBarSize"
+        android:background="?attr/colorPrimary"
+        android:elevation="4dp"
+        android:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar"
+        app:popupTheme="@style/ThemeOverlay.AppCompat.Dark"
+        android:layout_alignParentTop="true"
+        android:layout_alignParentStart="true" />
+
+    <TextView
+        android:text="@string/crc_title"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/tv_crc_header"
+        android:layout_alignStart="@+id/tv_crc_header"
+        android:layout_marginTop="26dp"
+        android:id="@+id/tv_crc_title" />
+
+    <TextView
+        android:text="@string/crc_header"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="18dp"
+        android:id="@+id/tv_crc_header"
+        android:textSize="24sp"
+        android:layout_marginStart="13dp"
+        android:layout_below="@+id/toolbar_chat_room_creation"
+        android:layout_alignParentStart="true"
+        android:textStyle="normal|bold" />
+
+    <TextView
+        android:text="@string/crc_category"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/tv_crc_category"
+        android:layout_marginTop="34dp"
+        android:layout_below="@+id/tf_crc_title"
+        android:layout_alignStart="@+id/tv_crc_title" />
+
+    <TextView
+        android:text="@string/crc_image"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="72dp"
+        android:id="@+id/tv_crc_thumbnail"
+        android:layout_below="@+id/sp_crc_categories"
+        android:layout_alignStart="@+id/tv_crc_category" />
+
+    <TextView
+        android:text="@string/crc_range"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="34dp"
+        android:id="@+id/tv_crc_range"
+        android:layout_below="@+id/ib_crc_thumbnail"
+        android:layout_alignEnd="@+id/tv_crc_thumbnail" />
+
+    <ImageButton
+        app:srcCompat="@drawable/ic_shoutlogo"
+        android:id="@+id/ib_crc_thumbnail"
+        android:layout_width="250dp"
+        android:layout_height="150dp"
+        android:layout_marginTop="11dp"
+        android:layout_below="@+id/sp_crc_categories"
+        android:layout_alignStart="@+id/sp_crc_categories"
+        android:layout_marginStart="13dp"
+        android:elevation="20dp" />
+
+    <SeekBar
+        android:layout_height="wrap_content"
+        android:id="@+id/sb_crc_range"
+        android:layout_alignTop="@+id/tv_crc_range"
+        android:layout_alignEnd="@+id/sp_crc_categories"
+        android:layout_width="200dp" />
+
+    <Spinner
+        android:id="@+id/sp_crc_categories"
+        android:layout_height="50dp"
+        android:layout_marginTop="18dp"
+        android:layout_width="280dp"
+        android:layout_below="@+id/tf_crc_title"
+        android:layout_alignEnd="@+id/tf_crc_title" />
+
+    <EditText
+        android:layout_height="wrap_content"
+        android:inputType="textPersonName"
+        android:ems="10"
+        android:maxLength="18"
+        android:id="@+id/tf_crc_title"
+        android:layout_width="280dp"
+        android:layout_alignBaseline="@+id/tv_crc_title"
+        android:layout_alignBottom="@+id/tv_crc_title"
+        android:layout_toEndOf="@+id/tv_crc_ttl" />
+
+    <TextView
+        android:text="0m"
+        android:layout_height="wrap_content"
+        android:id="@+id/tv_crc_range_count"
+        android:textStyle="normal|bold"
+        android:layout_width="50dp"
+        android:layout_alignTop="@+id/sb_crc_range"
+        android:layout_toStartOf="@+id/sb_crc_range"
+        android:textSize="16sp" />
+
+    <TextView
+        android:text="0h"
+        android:layout_width="50dp"
+        android:layout_height="wrap_content"
+        android:id="@+id/tv_crc_ttl_count"
+        android:textSize="16sp"
+        android:textStyle="normal|bold"
+        android:layout_alignBottom="@+id/sb_crc_ttl"
+        android:layout_toStartOf="@+id/sb_crc_ttl" />
+
+    <TextView
+        android:text="@string/crc_ttl"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="20dp"
+        android:id="@+id/tv_crc_ttl"
+        android:layout_below="@+id/tv_crc_range_count"
+        android:layout_alignStart="@+id/tv_crc_range" />
+
+    <Button
+        android:text="@string/crc_create"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="13dp"
+        android:id="@+id/bt_crc_create"
+        android:layout_alignParentBottom="true"
+        android:layout_toEndOf="@+id/tv_crc_header"
+        android:layout_marginStart="27dp"
+        style="@style/Widget.AppCompat.Button.Borderless.Colored"
+        android:textColor="@color/authui_colorPrimary"
+        android:onClick="createChatRoomIfValid"/>
+
+    <Button
+        android:text="@string/cancel"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/bt_crc_cancel"
+        style="@style/Widget.AppCompat.Button.Borderless.Colored"
+        android:layout_alignBaseline="@+id/bt_crc_create"
+        android:layout_alignBottom="@+id/bt_crc_create"
+        android:layout_toStartOf="@+id/sb_crc_ttl"
+        android:onClick="cancelCreation"/>
+
+    <SeekBar
+        android:layout_height="wrap_content"
+        android:id="@+id/sb_crc_ttl"
+        android:layout_width="200dp"
+        android:layout_alignTop="@+id/tv_crc_ttl"
+        android:layout_toEndOf="@+id/tv_crc_range_count" />
+
+</RelativeLayout>

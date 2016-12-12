@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/container_list_item"
+    android:layout_width="170dp"
+    android:layout_height="200dp"
+    android:background="@drawable/big_card">
+
+    <include layout="@layout/chatroom_item_content_layout" />
+</RelativeLayout>

@@ -1,4 +1,4 @@
-package es.upm.dam2016g6.shout.Activities;
+package es.upm.dam2016g6.shout.activities;
 
 import android.Manifest;
 import android.content.Intent;
@@ -35,18 +35,18 @@ import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DatabaseReference;
-import com.google.firebase.database.FirebaseDatabase;
 import com.roughike.bottombar.BottomBar;
 import com.roughike.bottombar.OnTabSelectListener;
 
 import java.text.DateFormat;
 import java.util.Date;
 
-import es.upm.dam2016g6.shout.Fragments.ChatRoomsFragment;
-import es.upm.dam2016g6.shout.Fragments.DiscoveryFragment;
-import es.upm.dam2016g6.shout.Fragments.MyProfileFragment;
-import es.upm.dam2016g6.shout.Fragments.PrivateConversationsFragment;
 import es.upm.dam2016g6.shout.R;
+import es.upm.dam2016g6.shout.fragments.ChatRoomsFragment;
+import es.upm.dam2016g6.shout.fragments.DiscoveryFragment;
+import es.upm.dam2016g6.shout.fragments.MyProfileFragment;
+import es.upm.dam2016g6.shout.fragments.PrivateConversationsFragment;
+import es.upm.dam2016g6.shout.support.Utils;
 
 public class MainActivity extends AppCompatActivity
         implements MyProfileFragment.OnProfileInteractionListener,
@@ -58,6 +58,9 @@ public class MainActivity extends AppCompatActivity
     private static final String REQUESTING_LOCATION_UPDATES_KEY = "RLUK_MainActivity";
     private static final String LOCATION_KEY = "LK_MainActivity";
     private static final String LAST_UPDATED_TIME_STRING_KEY = "LUTSK_MainActivity";
+    public static final String DISCOVERY_FRAGMENT = "DISCOVERY_FRAGMENT";
+    public static final String CHATROOMS_FRAGMENT_CREATION = "CHATROOMS_FRAGMENT_CREATE";
+    public static final String FRAGMENT_TO_INFLATE = "FRAGMENT_TO_INFLATE";
 
     private boolean mRequestingLocationUpdates = true;
     private LocationRequest mLocationRequest;
@@ -87,7 +90,7 @@ public class MainActivity extends AppCompatActivity
                     .build();
         }
 
-        geoFire = new GeoFire(FirebaseDatabase.getInstance().getReference("locations"));
+        geoFire = new GeoFire(Utils.getDatabase().getReference("locations"));
         userId = FirebaseAuth.getInstance().getCurrentUser().getUid();
 
 //        if (savedInstanceState != null) {
@@ -115,6 +118,18 @@ public class MainActivity extends AppCompatActivity
             }
         });
 
+        Intent intent = getIntent();
+        String param = intent.getStringExtra(MainActivity.FRAGMENT_TO_INFLATE);
+        if (param != null) {
+            switch(param) {
+                case CHATROOMS_FRAGMENT_CREATION:
+                    bottomBar.selectTabAtPosition(1);
+                    break;
+                default:
+                    bottomBar.selectTabAtPosition(0);
+            }
+        }
+
         // Set up location requests for location updates
         createLocationRequest();
     }
@@ -135,7 +150,8 @@ public class MainActivity extends AppCompatActivity
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
             case R.id.action_logout:
-                deleteLocationFromFirebase();
+                FirebaseUser authUser = FirebaseAuth.getInstance().getCurrentUser();
+                deleteLocationFromFirebase(authUser.getUid());
                 AuthUI.getInstance()
                         .signOut(this)
                         .addOnCompleteListener(new OnCompleteListener<Void>() {
@@ -146,6 +162,10 @@ public class MainActivity extends AppCompatActivity
                                 finish();
                             }
                         });
+                return true;
+
+            case R.id.action_new_chat_rooms:
+                startActivity(new Intent(this, ChatRoomCreationActivity.class));
                 return true;
 
             default:
@@ -217,7 +237,6 @@ public class MainActivity extends AppCompatActivity
     @Override
     protected void onStop() {
         mGoogleApiClient.disconnect();
-        deleteLocationFromFirebase();
         super.onStop();
     }
 
@@ -259,6 +278,7 @@ public class MainActivity extends AppCompatActivity
     protected void stopLocationUpdates() {
         LocationServices.FusedLocationApi.removeLocationUpdates(
                 mGoogleApiClient, this);
+        mRequestingLocationUpdates = false;
     }
 
     @Override
@@ -322,10 +342,9 @@ public class MainActivity extends AppCompatActivity
 //        }
 //    }
 
-    private static void deleteLocationFromFirebase() {
-        DatabaseReference ref = FirebaseDatabase.getInstance().getReference("locations");
-        FirebaseUser authUser = FirebaseAuth.getInstance().getCurrentUser();
+    private static void deleteLocationFromFirebase(String uid) {
+        DatabaseReference ref = Utils.getDatabase().getReference("locations");
         GeoFire geoFire = new GeoFire(ref);
-        geoFire.removeLocation(authUser.getUid());
+        geoFire.removeLocation(uid);
     }
 }

@@ -2,18 +2,18 @@
 <tabs>
     <tab id="@+id/tab_map"
         title="@string/menu_map"
-        icon="@drawable/ic_map"
+        icon="@drawable/ic_action_discovery"
         barColorWhenSelected="#303F9F" />
     <tab id="@+id/tab_chatrooms"
         title="@string/menu_chatrooms"
-        icon="@drawable/ic_chatrooms"
+        icon="@drawable/ic_action_chatrooms"
         barColorWhenSelected="#303F9F" />
     <tab id="@+id/tab_pm"
         title="@string/menu_pm"
-        icon="@drawable/ic_pm"
+        icon="@drawable/ic_action_pm"
         barColorWhenSelected="#303F9F" />
     <tab id="@+id/tab_profile"
         title="@string/menu_profile"
-        icon="@drawable/ic_profile"
+        icon="@drawable/ic_action_myprofile_ind"
         barColorWhenSelected="#303F9F" />
 </tabs>

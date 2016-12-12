@@ -1,13 +1,24 @@
-package es.upm.dam2016g6.shout.Fragments;
+package es.upm.dam2016g6.shout.fragments;
 
 
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.support.v7.widget.GridLayoutManager;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+
+import java.util.List;
+
 import es.upm.dam2016g6.shout.R;
+import es.upm.dam2016g6.shout.model.ChatRoom;
+import es.upm.dam2016g6.shout.support.ChatRoomViewHolder;
+import es.upm.dam2016g6.shout.support.ChatRoomsRecyclerViewAdapter;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -15,6 +26,9 @@ import es.upm.dam2016g6.shout.R;
  * create an instance of this fragment.
  */
 public class NearbyChatRoomsFragment extends Fragment {
+
+    private List<ChatRoom> chatRooms;
+    private View mView;
 
     public NearbyChatRoomsFragment() {
         // Required empty public constructor
@@ -34,7 +48,24 @@ public class NearbyChatRoomsFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_nearby_chat_rooms, container, false);
+        mView = inflater.inflate(R.layout.fragment_nearby_chat_rooms, container, false);
+
+        // Store likes into a recycler view and configure it
+        RecyclerView rv = (RecyclerView) this.mView.findViewById(R.id.rv_nearby_chat_rooms);
+        rv.setHasFixedSize(true);
+        LinearLayoutManager layoutManager = new GridLayoutManager(this.getActivity(), 2);
+        layoutManager.setOrientation(LinearLayoutManager.VERTICAL);
+        rv.setLayoutManager(layoutManager);
+
+        DatabaseReference ref = FirebaseDatabase.getInstance().getReference("chatrooms");
+        ChatRoomsRecyclerViewAdapter adapter = new ChatRoomsRecyclerViewAdapter(
+                ChatRoom.class,
+                R.layout.chatroom_item_layout,
+                ChatRoomViewHolder.class,
+                ref);
+        rv.setAdapter(adapter);
+
+        return mView;
     }
 
 }

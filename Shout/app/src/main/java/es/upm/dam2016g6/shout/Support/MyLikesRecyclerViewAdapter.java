@@ -1,4 +1,4 @@
-package es.upm.dam2016g6.shout.Support;
+package es.upm.dam2016g6.shout.support;
 
 import android.content.Context;
 import android.support.v7.widget.RecyclerView;
@@ -12,7 +12,7 @@ import com.bumptech.glide.Glide;
 
 import java.util.List;
 
-import es.upm.dam2016g6.shout.Model.FacebookLike;
+import es.upm.dam2016g6.shout.model.FacebookLike;
 import es.upm.dam2016g6.shout.R;
 
 /**

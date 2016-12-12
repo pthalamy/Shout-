@@ -1,4 +1,4 @@
-package es.upm.dam2016g6.shout.Fragments;
+package es.upm.dam2016g6.shout.fragments;
 
 
 import android.app.Fragment;
@@ -13,7 +13,7 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import es.upm.dam2016g6.shout.R;
-import es.upm.dam2016g6.shout.Support.ChatRoomsFragmentPagerAdapter;
+import es.upm.dam2016g6.shout.support.ChatRoomsFragmentPagerAdapter;
 
 
 /**

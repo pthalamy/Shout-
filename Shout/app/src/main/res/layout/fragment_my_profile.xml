@@ -4,7 +4,7 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".Fragments.MyProfileFragment"
+    tools:context=".fragments.MyProfileFragment"
     android:background="@color/white">
 
    <TextView
@@ -17,7 +17,7 @@
         android:layout_marginTop="15dp"
         android:textStyle="normal|bold"
         android:textSize="20sp"
-        android:textColor="@color/authui_colorActivated" />
+        android:textColor="@color/colorPrimary" />
 
     <android.support.v7.widget.RecyclerView
         android:id="@+id/rv_mylikes"
@@ -42,7 +42,7 @@
         android:layout_below="@+id/img_profilePic"
         android:layout_alignParentStart="true"
         android:layout_marginStart="13dp"
-        android:textColor="@color/authui_colorActivated"/>
+        android:textColor="@color/colorPrimary"/>
 
     <android.support.v7.widget.Toolbar
         android:id="@+id/toolbar_my_profile"
