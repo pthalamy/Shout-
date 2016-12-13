@@ -68,7 +68,7 @@ public class ChatRoomsRecyclerViewAdapter extends FirebaseRecyclerAdapter<ChatRo
                     ChatRoom chatroom = (ChatRoom) view.getTag();
                     DatabaseReference ref = Utils.getDatabase().getReference();
                     String userUid = FirebaseAuth.getInstance().getCurrentUser().getUid();
-                    ref.child("/users/" + userUid + "/userChatroomUids/" + chatroom.uid).setValue(true);
+                    ref.child("/users/" + userUid + "/userChatroomsUids/" + chatroom.uid).setValue(true);
                     ref.child("/chatrooms/" + chatroom.uid + "/userUids/" + userUid).setValue(true);
                     bt.setEnabled(false);
                     bt.setAlpha(0.5f);

@@ -55,7 +55,7 @@ public class ChatRoom {
         // TODO: 5/12/16  Improve this.
         long expirationDateEpoch = creationDate.getTime() + ttl * 3600 * 1000;
         this.expirationDate = new Date(expirationDateEpoch);
-        this.creatorUid = User.getCurrentUser().uid;
+        this.creatorUid = creatorUid;
         usersUids.put(creatorUid, true);
     }
 
@@ -141,7 +141,7 @@ public class ChatRoom {
 
             @Override
             public void onCancelled(DatabaseError databaseError) {
-                Log.w(TAG, "postComments:onCancelled", databaseError.toException());
+                Log.w(TAG, "onCancelled:", databaseError.toException());
             }
         };
         mChatroomsReference.addChildEventListener(chatroomsEventListener);
