@@ -2,6 +2,7 @@ package es.upm.dam2016g6.shout.support;
 
 import android.util.TypedValue;
 import android.view.View;
+import android.widget.Button;
 
 import com.bumptech.glide.Glide;
 import com.firebase.ui.database.FirebaseRecyclerAdapter;
@@ -62,12 +63,18 @@ public class ChatRoomsRecyclerViewAdapter extends FirebaseRecyclerAdapter<ChatRo
             viewHolder.bt_join.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
+                    Button bt = (Button)view;
                     // Retrieve previously stored tag
                     ChatRoom chatroom = (ChatRoom) view.getTag();
                     DatabaseReference ref = Utils.getDatabase().getReference();
                     String userUid = FirebaseAuth.getInstance().getCurrentUser().getUid();
                     ref.child("/users/" + userUid + "/userChatroomUids/" + chatroom.uid).setValue(true);
                     ref.child("/chatrooms/" + chatroom.uid + "/userUids/" + userUid).setValue(true);
+                    bt.setEnabled(false);
+                    bt.setAlpha(0.5f);
+                    bt.setText("JOINED");
+                    bt.setTextSize(TypedValue.COMPLEX_UNIT_PX, bt.getTextSize() - 2);
+
                 }
             });
         } else { // User already in chatroom, cannot join again
