@@ -20,7 +20,11 @@ import com.google.android.gms.maps.model.CameraPosition;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MarkerOptions;
 
+import java.util.List;
+
 import es.upm.dam2016g6.shout.R;
+import es.upm.dam2016g6.shout.model.ChatRoom;
+import es.upm.dam2016g6.shout.model.User;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -30,6 +34,8 @@ public class DiscoveryFragment extends android.support.v4.app.Fragment {
 
     MapView mMapView;
     private GoogleMap googleMap;
+    public List<User> usersInRange = null;
+    public List<ChatRoom> chatroomsInRange = null;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -39,6 +45,7 @@ public class DiscoveryFragment extends android.support.v4.app.Fragment {
         Toolbar toolbar = (Toolbar) rootView.findViewById(R.id.toolbar_discovery);
         toolbar.setTitle("Discovery");
         ((AppCompatActivity)getActivity()).setSupportActionBar(toolbar);
+
 
         mMapView = (MapView) rootView.findViewById(R.id.mapView);
         mMapView.onCreate(savedInstanceState);
