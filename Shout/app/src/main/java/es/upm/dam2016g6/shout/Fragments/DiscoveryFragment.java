@@ -11,6 +11,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import com.firebase.geofire.GeoLocation;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.MapView;
@@ -18,11 +19,13 @@ import com.google.android.gms.maps.MapsInitializer;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.model.CameraPosition;
 import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 
-import java.util.List;
+import java.util.HashMap;
 
 import es.upm.dam2016g6.shout.R;
+import es.upm.dam2016g6.shout.activities.MainActivity;
 import es.upm.dam2016g6.shout.model.ChatRoom;
 import es.upm.dam2016g6.shout.model.User;
 
@@ -34,8 +37,9 @@ public class DiscoveryFragment extends android.support.v4.app.Fragment {
 
     MapView mMapView;
     private GoogleMap googleMap;
-    public List<User> usersInRange = null;
-    public List<ChatRoom> chatroomsInRange = null;
+    private HashMap<String, Marker> mUserMarkers; // Markers for users, indexed by key
+    private HashMap<String, Marker> mChatroomMarkers; // Markers for chatrooms, indexed by keya
+    private MainActivity mainActivity;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -46,6 +50,7 @@ public class DiscoveryFragment extends android.support.v4.app.Fragment {
         toolbar.setTitle("Discovery");
         ((AppCompatActivity)getActivity()).setSupportActionBar(toolbar);
 
+        mainActivity = (MainActivity)DiscoveryFragment.this.getActivity();
 
         mMapView = (MapView) rootView.findViewById(R.id.mapView);
         mMapView.onCreate(savedInstanceState);
@@ -82,12 +87,20 @@ public class DiscoveryFragment extends android.support.v4.app.Fragment {
 
                 googleMap.setMyLocationEnabled(true);
 
-                // For dropping a marker at a point on the Map
-                LatLng sydney = new LatLng(-34, 151);
-                googleMap.addMarker(new MarkerOptions().position(sydney).title("Marker Title").snippet("Marker Description"));
+                // Draw already loaded users and chatrooms
+                for (User user : DiscoveryFragment.this.mainActivity.usersInRange.values()) {
+                    drawUser(user);
+                }
+
+                for (ChatRoom chatroom : DiscoveryFragment.this.mainActivity.chatroomsInRange.values()) {
+                    drawChatroom(chatroom);
+                }
 
                 // For zooming automatically to the location of the marker
-                CameraPosition cameraPosition = new CameraPosition.Builder().target(sydney).zoom(12).build();
+                CameraPosition cameraPosition = new CameraPosition.Builder()
+                        .target(new LatLng(mainActivity.mCurrentLocation.getLatitude(), mainActivity.mCurrentLocation.getLongitude()))
+                        .zoom((float) (mainActivity.discoveryRadius * 1.5))
+                        .build();
                 googleMap.animateCamera(CameraUpdateFactory.newCameraPosition(cameraPosition));
             }
         });
@@ -123,4 +136,42 @@ public class DiscoveryFragment extends android.support.v4.app.Fragment {
         // Required empty public constructor
     }
 
+    public void drawUser(User user) {
+        Marker userMarker = googleMap.addMarker(new MarkerOptions()
+                .position(new LatLng(user.location.latitude, user.location.longitude))
+                .title(user.name)
+                .snippet(user.uid));
+        mUserMarkers.put(user.uid, userMarker);
+    }
+
+        public void drawChatroom(ChatRoom chatroom) {
+        Marker chatroomMarker= googleMap.addMarker(new MarkerOptions()
+                .position(new LatLng(chatroom.location.latitude, chatroom.location.longitude))
+                .title(chatroom.title)
+                .snippet(chatroom.uid));
+        chatroomMarker.setAlpha((float) 0.5);
+        mUserMarkers.put(chatroom.uid, chatroomMarker);
+    }
+
+    public void undrawUser(String userKey) {
+        Marker marker = mUserMarkers.get(userKey);
+        if (marker != null) {
+            mUserMarkers.remove(userKey);
+            marker.remove();
+        }
+    }
+
+    public void undrawChatroom(String chatroomKey) {
+        Marker marker = mChatroomMarkers.get(chatroomKey);
+        if (marker != null) {
+            mChatroomMarkers.remove(chatroomKey);
+            marker.remove();
+        }
+    }
+
+    public void updateUserLocation(String userKey, GeoLocation location) {
+        Marker marker = mUserMarkers.get(userKey);
+        if (marker != null)
+            marker.setPosition(new LatLng(location.latitude, location.longitude));
+    }
 }

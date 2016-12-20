@@ -35,7 +35,7 @@ public class ChatRoom {
     public Date creationDate;
     public Date expirationDate;
     public String creatorUid;
-    private GeoLocation location; // Turn public for serialization?
+    public GeoLocation location;
     public int range;
     public Map<String, Boolean> usersUids = new HashMap<>();
 
@@ -44,7 +44,7 @@ public class ChatRoom {
     }
 
     public ChatRoom(String uid, String title, String category, String imageUrl,
-                    int range, int ttl, String creatorUid) {
+                    int range, int ttl, String creatorUid, GeoLocation location) {
         this.uid = uid;
         this.title = title;
         this.category = category;
@@ -56,14 +56,16 @@ public class ChatRoom {
         long expirationDateEpoch = creationDate.getTime() + ttl * 3600 * 1000;
         this.expirationDate = new Date(expirationDateEpoch);
         this.creatorUid = creatorUid;
+        this.location = location;
         usersUids.put(creatorUid, true);
     }
 
     @Exclude
     public static ChatRoom writeNewChatRoom(String title, String category, String imageUrl,
-                    int range, int ttl, String creatorUid) {
+                    int range, int ttl, String creatorUid, GeoLocation location) {
         String key = getChatroomsReferenceInstance().push().getKey();
-        ChatRoom chatroom = new ChatRoom(key, title, category, imageUrl, range, ttl, creatorUid);
+        ChatRoom chatroom = new ChatRoom(key, title, category, imageUrl,
+                range, ttl, creatorUid, location);
 
         Log.d(TAG, "User " + creatorUid + " created new chatroom: " + key);
         DatabaseReference mRef = Utils.getDatabase().getReference();

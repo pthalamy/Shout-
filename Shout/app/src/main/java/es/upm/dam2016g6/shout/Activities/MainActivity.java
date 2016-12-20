@@ -18,6 +18,8 @@ import android.view.MenuItem;
 
 import com.firebase.geofire.GeoFire;
 import com.firebase.geofire.GeoLocation;
+import com.firebase.geofire.GeoQuery;
+import com.firebase.geofire.GeoQueryEventListener;
 import com.firebase.ui.auth.AuthUI;
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.common.api.PendingResult;
@@ -34,18 +36,25 @@ import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.Query;
+import com.google.firebase.database.ValueEventListener;
 import com.roughike.bottombar.BottomBar;
 import com.roughike.bottombar.OnTabSelectListener;
 
 import java.text.DateFormat;
 import java.util.Date;
+import java.util.HashMap;
 
 import es.upm.dam2016g6.shout.R;
 import es.upm.dam2016g6.shout.fragments.ChatRoomsFragment;
 import es.upm.dam2016g6.shout.fragments.DiscoveryFragment;
 import es.upm.dam2016g6.shout.fragments.MyProfileFragment;
 import es.upm.dam2016g6.shout.fragments.PrivateConversationsFragment;
+import es.upm.dam2016g6.shout.model.ChatRoom;
+import es.upm.dam2016g6.shout.model.User;
 import es.upm.dam2016g6.shout.support.Utils;
 
 public class MainActivity extends AppCompatActivity
@@ -65,14 +74,21 @@ public class MainActivity extends AppCompatActivity
     private boolean mRequestingLocationUpdates = true;
     private LocationRequest mLocationRequest;
     private GoogleApiClient mGoogleApiClient;
-    private Location mCurrentLocation;
+    public Location mCurrentLocation;
+    public GeoLocation mCurrentGeoLocation;
     private String mLastUpdateTime;
 
     private Fragment fragment;
+    public HashMap<String, User> usersInRange = new HashMap<>();
+    public HashMap<String, ChatRoom> chatroomsInRange = new HashMap<>();
 
     // Store to speed up location updates //
-    private GeoFire geoFire;
+    private GeoFire geoFireUsers;
+    private GeoFire geoFireChatrooms;
     private String userId;
+    private GeoQuery mGeoQueryUsers;
+    private GeoQuery mGeoQueryChatrooms;
+    public final double discoveryRadius = 1; // In kilometers
     // end //
 
     @Override
@@ -90,7 +106,8 @@ public class MainActivity extends AppCompatActivity
                     .build();
         }
 
-        geoFire = new GeoFire(Utils.getDatabase().getReference("locations"));
+        geoFireUsers = new GeoFire(Utils.getDatabase().getReference("userLocations"));
+        geoFireChatrooms = new GeoFire(Utils.getDatabase().getReference("chatroomLocations"));
         userId = FirebaseAuth.getInstance().getCurrentUser().getUid();
 
 //        if (savedInstanceState != null) {
@@ -121,7 +138,7 @@ public class MainActivity extends AppCompatActivity
         Intent intent = getIntent();
         String param = intent.getStringExtra(MainActivity.FRAGMENT_TO_INFLATE);
         if (param != null) {
-            switch(param) {
+            switch (param) {
                 case CHATROOMS_FRAGMENT_CREATION:
                     bottomBar.selectTabAtPosition(1);
                     break;
@@ -129,6 +146,117 @@ public class MainActivity extends AppCompatActivity
                     bottomBar.selectTabAtPosition(0);
             }
         }
+
+        mCurrentGeoLocation = Utils.getCurrentLocation(this);
+        // creates a new query around user's location, with a radius of discoverRadius kilometers
+        mGeoQueryUsers = geoFireUsers.queryAtLocation(mCurrentGeoLocation, discoveryRadius);
+        mGeoQueryUsers.addGeoQueryEventListener(new GeoQueryEventListener() {
+            @Override
+            public void onKeyEntered(String key, GeoLocation location) {
+                Log.d(MainActivity.this.TAG, String.format("User Key %s entered the search area at [%f,%f]", key, location.latitude, location.longitude));
+                Query userInRangeQuery = Utils.getDatabase().getReference().child("users").child(key);
+                userInRangeQuery.addListenerForSingleValueEvent(new ValueEventListener() {
+                    @Override
+                    public void onDataChange(DataSnapshot dataSnapshot) {
+                        User user = dataSnapshot.getValue(User.class);
+                        usersInRange.put(user.uid, user);
+                        if (fragment instanceof DiscoveryFragment) {
+                            DiscoveryFragment df = (DiscoveryFragment)fragment;
+                            df.drawUser(user);
+                        }
+                    }
+
+                    @Override
+                    public void onCancelled(DatabaseError databaseError) {
+                        Log.w(TAG, "getChatroomInRange:onCancelled", databaseError.toException());
+                    }
+                });
+            }
+
+            @Override
+            public void onKeyExited(String key) {
+                Log.d(MainActivity.this.TAG, String.format("User Key %s is no longer in the search area", key));
+                usersInRange.remove(key);
+                if (fragment instanceof DiscoveryFragment) {
+                    DiscoveryFragment df = (DiscoveryFragment)fragment;
+                    df.undrawUser(key);
+                }
+            }
+
+            @Override
+            public void onKeyMoved(String key, GeoLocation location) {
+                Log.d(MainActivity.this.TAG, String.format("User Key %s moved within the search area to [%f,%f]", key, location.latitude, location.longitude));
+                if (fragment instanceof DiscoveryFragment) {
+                    DiscoveryFragment df = (DiscoveryFragment)fragment;
+                    df.updateUserLocation(key, location);
+                }
+            }
+
+            @Override
+            public void onGeoQueryReady() {
+                Log.d(MainActivity.this.TAG, "All initial user data has been loaded and events have been fired!");
+            }
+
+            @Override
+            public void onGeoQueryError(DatabaseError error) {
+                Log.d(MainActivity.this.TAG, "There was an error with this user query: " + error);
+            }
+        });
+
+        // creates a new query around user's location, with a radius of discoverRadius kilometers
+        mGeoQueryChatrooms = geoFireUsers.queryAtLocation(mCurrentGeoLocation, discoveryRadius);
+        mGeoQueryChatrooms.addGeoQueryEventListener(new GeoQueryEventListener() {
+            @Override
+            public void onKeyEntered(String key, GeoLocation location) {
+                Log.d(MainActivity.this.TAG, String.format("Chatroom Key %s entered the search area at [%f,%f]", key, location.latitude, location.longitude));
+                Query chatroomInRangeQuery = Utils.getDatabase().getReference().child("chatrooms").child(key);
+                chatroomInRangeQuery.addListenerForSingleValueEvent(new ValueEventListener() {
+                    @Override
+                    public void onDataChange(DataSnapshot dataSnapshot) {
+                        ChatRoom chatRoom = dataSnapshot.getValue(ChatRoom.class);
+                        chatroomsInRange.put(chatRoom.uid, chatRoom);
+                        if (fragment instanceof DiscoveryFragment) {
+                            DiscoveryFragment df = (DiscoveryFragment)fragment;
+                            df.drawChatroom(chatRoom);
+                        }
+                    }
+
+                    @Override
+                    public void onCancelled(DatabaseError databaseError) {
+                        Log.w(TAG, "getChatroomInRange:onCancelled", databaseError.toException());
+                    }
+                });
+
+            }
+
+            @Override
+            public void onKeyExited(String key) {
+                Log.d(MainActivity.this.TAG, String.format("Chatroom Key %s is no longer in the search area", key));
+                // chatroom has expired
+                chatroomsInRange.remove(key);
+                if (fragment instanceof DiscoveryFragment) {
+                    DiscoveryFragment df = (DiscoveryFragment)fragment;
+                    df.undrawChatroom(key);
+                }
+            }
+
+            @Override
+            public void onKeyMoved(String key, GeoLocation location) {
+                Log.d(MainActivity.this.TAG, String.format("Chatroom Key %s moved within the search area to [%f,%f]", key, location.latitude, location.longitude));
+                // Chatroom should not be able to move
+                // TODO: 20/12/16 update object location
+            }
+
+            @Override
+            public void onGeoQueryReady() {
+                Log.d(MainActivity.this.TAG, "All initial chatroom  data has been loaded and events have been fired!");
+            }
+
+            @Override
+            public void onGeoQueryError(DatabaseError error) {
+                Log.d(MainActivity.this.TAG, "There was an error with this chatroom query: " + error);
+            }
+        });
 
         // Set up location requests for location updates
         createLocationRequest();
@@ -303,9 +431,22 @@ public class MainActivity extends AppCompatActivity
         // Location has changed, update GeoFire and local location
         mCurrentLocation = location;
         mLastUpdateTime = DateFormat.getTimeInstance().format(new Date());
-        geoFire.setLocation(userId, new GeoLocation(location.getLatitude(), location.getLongitude()));
+        mCurrentGeoLocation = new GeoLocation(location.getLatitude(), location.getLongitude());
+        Utils.setCurrentLocation(mCurrentGeoLocation);
+
+        // Update general location
+        geoFireUsers.setLocation(userId, mCurrentGeoLocation);
         Log.d(TAG, mLastUpdateTime + ": Location changed -> (" + location.getLatitude()
                 + ", " + location.getLongitude() + ")");
+
+        // Update location in user as well
+        DatabaseReference ref = Utils.getDatabase().getReference();
+        String userUid = FirebaseAuth.getInstance().getCurrentUser().getUid();
+        ref.child("/users/" + userUid + "/location/").setValue(mCurrentGeoLocation);
+
+        // Update GeoQueries
+        mGeoQueryUsers.setCenter(mCurrentGeoLocation);
+        mGeoQueryChatrooms.setCenter(mCurrentGeoLocation);
     }
 
 //    public void onSaveInstanceState(Bundle savedInstanceState) {

@@ -24,6 +24,7 @@ import com.google.firebase.auth.FirebaseAuth;
 
 import es.upm.dam2016g6.shout.R;
 import es.upm.dam2016g6.shout.model.ChatRoom;
+import es.upm.dam2016g6.shout.support.Utils;
 
 public class ChatRoomCreationActivity extends AppCompatActivity
         implements AdapterView.OnItemSelectedListener {
@@ -109,7 +110,7 @@ public class ChatRoomCreationActivity extends AppCompatActivity
         if (creationFormIsComplete()) {
             // Create chat room
             ChatRoom chatroom = ChatRoom.writeNewChatRoom(et_title.getText().toString(), category, null,
-                    range, ttl, FirebaseAuth.getInstance().getCurrentUser().getUid());
+                    range, ttl, FirebaseAuth.getInstance().getCurrentUser().getUid(), Utils.getCurrentLocation(this));
 
             Intent upIntent = NavUtils.getParentActivityIntent(ChatRoomCreationActivity.this);
             upIntent.putExtra(MainActivity.FRAGMENT_TO_INFLATE, MainActivity.CHATROOMS_FRAGMENT_CREATION);

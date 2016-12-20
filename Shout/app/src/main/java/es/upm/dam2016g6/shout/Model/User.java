@@ -29,7 +29,7 @@ public class User {
     public String uid;
     public String name;
     public String facebookId;
-    public GeoLocation location = null;
+    public GeoLocation location;
     public Map<String, Boolean> userChatroomsUids = new HashMap<>();
 
     public User() {
