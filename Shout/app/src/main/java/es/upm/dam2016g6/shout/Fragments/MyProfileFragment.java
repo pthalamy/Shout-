@@ -43,7 +43,7 @@ import es.upm.dam2016g6.shout.support.MyLikesRecyclerViewAdapter;
  */
 public class MyProfileFragment extends android.support.v4.app.Fragment {
     /* Consult here for lifecycle information: {@link https://developer.android.com/guide/components/fragments.html#Creating} */
-    private static final String TAG = "TAG_MyProfileFragment";
+    private static final String TAG = "TAG_" + MyProfileFragment.class.getSimpleName();
 
     private View mView;
     private List<FacebookLike> fbLikes;

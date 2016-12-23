@@ -62,7 +62,7 @@ public class ChatRoom {
 
     @Exclude
     public static ChatRoom writeNewChatRoom(String title, String category, String imageUrl,
-                    int range, int ttl, String creatorUid, GeoLocation location) {
+                                            int range, int ttl, String creatorUid, GeoLocation location) {
         String key = getChatroomsReferenceInstance().push().getKey();
         ChatRoom chatroom = new ChatRoom(key, title, category, imageUrl,
                 range, ttl, creatorUid, location);
@@ -151,4 +151,18 @@ public class ChatRoom {
         return mChatroomsReference;
     }
 
+    public static void joinChatroom(ChatRoom chatroom) {
+        DatabaseReference ref = Utils.getDatabase().getReference();
+        String userUid = Utils.getCurrentUserUid();
+        ref.child("/users/" + userUid + "/userChatroomsUids/" + chatroom.uid).setValue(true);
+        ref.child("/chatrooms/" + chatroom.uid + "/userUids/" + userUid).setValue(true);
+    }
+
+    public static void leaveChatroom(ChatRoom chatroom) {
+        // Retrieve previously stored tag
+        DatabaseReference ref = Utils.getDatabase().getReference();
+        String userUid = Utils.getCurrentUserUid();
+        ref.child("/users/" + userUid + "/userChatroomsUids/" + chatroom.uid).removeValue();
+        ref.child("/chatrooms/" + chatroom.uid + "/userUids/" + userUid).removeValue();
+    }
 }
