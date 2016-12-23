@@ -94,7 +94,6 @@ public class MainActivity extends AppCompatActivity
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
         setContentView(R.layout.activity_main);
         BottomBar bottomBar = (BottomBar) findViewById(R.id.bottomBar);
 
@@ -108,7 +107,7 @@ public class MainActivity extends AppCompatActivity
 
         geoFireUsers = new GeoFire(Utils.getDatabase().getReference("userLocations"));
         geoFireChatrooms = new GeoFire(Utils.getDatabase().getReference("chatroomLocations"));
-        userId = FirebaseAuth.getInstance().getCurrentUser().getUid();
+        userId = Utils.getCurrentUserUid();
 
 //        if (savedInstanceState != null) {
 //            updateValuesFromBundle(savedInstanceState);
@@ -285,7 +284,8 @@ public class MainActivity extends AppCompatActivity
                         .addOnCompleteListener(new OnCompleteListener<Void>() {
                             public void onComplete(@NonNull Task<Void> task) {
                                 // user is now signed out
-                                System.err.println("User signed out");
+                                Log.d(TAG, "User signed out");
+                                Utils.resetCurrentUserUid();
                                 startActivity(new Intent(MainActivity.this, LoginActivity.class));
                                 finish();
                             }
@@ -441,7 +441,7 @@ public class MainActivity extends AppCompatActivity
 
         // Update location in user as well
         DatabaseReference ref = Utils.getDatabase().getReference();
-        String userUid = FirebaseAuth.getInstance().getCurrentUser().getUid();
+        String userUid = Utils.getCurrentUserUid();
         ref.child("/users/" + userUid + "/location/").setValue(mCurrentGeoLocation);
 
         // Update GeoQueries

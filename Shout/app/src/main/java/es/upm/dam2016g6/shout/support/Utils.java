@@ -10,6 +10,7 @@ import android.location.LocationManager;
 import android.support.v4.app.ActivityCompat;
 
 import com.firebase.geofire.GeoLocation;
+import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.FirebaseDatabase;
 
 /**
@@ -57,5 +58,17 @@ public class Utils {
 
     public static void setCurrentLocation(GeoLocation newLocation) {
         currentLocation = newLocation;
+    }
+
+    private static String currentUserUid = null;
+    public static String getCurrentUserUid() {
+        if (currentUserUid == null)
+            currentUserUid = Utils.getCurrentUserUid();
+
+        return currentUserUid;
+    }
+
+    public static void resetCurrentUserUid() {
+        currentUserUid = null;
     }
 }
