@@ -10,7 +10,7 @@ import android.widget.TextView;
  * Created by pthalamy on 11/12/16.
  */
 
-public class MyChatRoomViewHolder extends RecyclerView.ViewHolder {
+public class ListChatRoomViewHolder extends RecyclerView.ViewHolder {
     Context context;
 
     TextView tv_title;
@@ -20,7 +20,7 @@ public class MyChatRoomViewHolder extends RecyclerView.ViewHolder {
     TextView tv_latest;
     ImageButton ib_star;
 
-    public MyChatRoomViewHolder(View itemView) {
+    public ListChatRoomViewHolder(View itemView) {
         super(itemView);
     }
 }

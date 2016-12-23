@@ -15,8 +15,10 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 
 import es.upm.dam2016g6.shout.R;
-import es.upm.dam2016g6.shout.support.MyChatRoomViewHolder;
-import es.upm.dam2016g6.shout.support.MyChatRoomsRecyclerViewAdapter;
+import es.upm.dam2016g6.shout.model.Chat;
+import es.upm.dam2016g6.shout.model.ChatRoom;
+import es.upm.dam2016g6.shout.support.ChatRoomsIndexRecyclerViewAdapter;
+import es.upm.dam2016g6.shout.support.ListChatRoomViewHolder;
 import es.upm.dam2016g6.shout.support.Utils;
 
 /**
@@ -48,14 +50,18 @@ public class MyChatRoomsFragment extends Fragment {
         layoutManager.setOrientation(LinearLayoutManager.VERTICAL);
         rv.setLayoutManager(layoutManager);
 
-        DatabaseReference ref = FirebaseDatabase
+        DatabaseReference keyRef = FirebaseDatabase
                 .getInstance()
-                .getReference("users/" + Utils.getCurrentUserUid() + "/userChatroomsUids/");
-        MyChatRoomsRecyclerViewAdapter adapter = new MyChatRoomsRecyclerViewAdapter(
-                Pair.class,
-                R.layout.chatroom_item_layout,
-                MyChatRoomViewHolder.class,
-                ref);
+                .getReference("/users/" + Utils.getCurrentUserUid() + "/userChatroomsUids/");
+        DatabaseReference dataRef = FirebaseDatabase
+                .getInstance()
+                .getReference("/chatrooms/");
+        ChatRoomsIndexRecyclerViewAdapter adapter = new ChatRoomsIndexRecyclerViewAdapter(
+                ChatRoom.class,
+                R.layout.list_chatroom_item_layout,
+                ListChatRoomViewHolder.class,
+                keyRef,
+                dataRef);
         rv.setAdapter(adapter);
 
         return mView;
