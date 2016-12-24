@@ -63,7 +63,7 @@ public class Utils {
     private static String currentUserUid = null;
     public static String getCurrentUserUid() {
         if (currentUserUid == null)
-            currentUserUid = Utils.getCurrentUserUid();
+            currentUserUid = FirebaseAuth.getInstance().getCurrentUser().getUid();
 
         return currentUserUid;
     }
