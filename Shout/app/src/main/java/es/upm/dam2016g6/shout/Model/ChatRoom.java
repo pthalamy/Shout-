@@ -2,6 +2,7 @@ package es.upm.dam2016g6.shout.model;
 
 import android.util.Log;
 
+import com.firebase.geofire.GeoFire;
 import com.firebase.geofire.GeoLocation;
 import com.google.firebase.database.ChildEventListener;
 import com.google.firebase.database.DataSnapshot;
@@ -23,7 +24,7 @@ import es.upm.dam2016g6.shout.support.Utils;
 @IgnoreExtraProperties
 public class ChatRoom {
 
-    private static final String TAG = "TAG_ChatRoom";
+    private static final String TAG = "TAG_" + ChatRoom.class.getSimpleName();
     private static DatabaseReference mChatroomsReference = null;
     private static HashMap<String, ChatRoom> chatrooms = new HashMap<>();
     private static final String defaultImageUrl = "http://shushi168.com/data/out/193/37127382-random-image.png";
@@ -35,16 +36,18 @@ public class ChatRoom {
     public Date creationDate;
     public Date expirationDate;
     public String creatorUid;
-    public GeoLocation location;
+    public String lastText;
+    public String lastTextAuthor;
+    public Date lastTextTime;
     public int range;
-    public Map<String, Boolean> usersUids = new HashMap<>();
+    public Map<String, Boolean> userUids = new HashMap<>();
 
     public ChatRoom() {
         // Default constructor required for calls to DataSnapshot.getValue(User.class)
     }
 
     public ChatRoom(String uid, String title, String category, String imageUrl,
-                    int range, int ttl, String creatorUid, GeoLocation location) {
+                    int range, int ttl, String creatorUid) {
         this.uid = uid;
         this.title = title;
         this.category = category;
@@ -56,8 +59,10 @@ public class ChatRoom {
         long expirationDateEpoch = creationDate.getTime() + ttl * 3600 * 1000;
         this.expirationDate = new Date(expirationDateEpoch);
         this.creatorUid = creatorUid;
-        this.location = location;
-        usersUids.put(creatorUid, true);
+        this.lastText = "No messages yet.";
+        this.lastTextAuthor = "";
+        this.lastTextTime = null;
+        userUids.put(creatorUid, true);
     }
 
     @Exclude
@@ -65,7 +70,7 @@ public class ChatRoom {
                                             int range, int ttl, String creatorUid, GeoLocation location) {
         String key = getChatroomsReferenceInstance().push().getKey();
         ChatRoom chatroom = new ChatRoom(key, title, category, imageUrl,
-                range, ttl, creatorUid, location);
+                range, ttl, creatorUid);
 
         Log.d(TAG, "User " + creatorUid + " created new chatroom: " + key);
         DatabaseReference mRef = Utils.getDatabase().getReference();
@@ -74,6 +79,10 @@ public class ChatRoom {
         childUpdates.put("/chatrooms/" + key, chatroom);
         mRef.updateChildren(childUpdates);
         mRef.child("/users/" + creatorUid + "/userChatroomsUids/" + key).setValue(true);
+
+        // Set General Location as well
+        GeoFire geoFireChatrooms = new GeoFire(Utils.getDatabase().getReference("chatroomLocations"));
+        geoFireChatrooms.setLocation(chatroom.uid, location);
 
         return chatroom;
     }
@@ -156,6 +165,7 @@ public class ChatRoom {
         String userUid = Utils.getCurrentUserUid();
         ref.child("/users/" + userUid + "/userChatroomsUids/" + chatroom.uid).setValue(true);
         ref.child("/chatrooms/" + chatroom.uid + "/userUids/" + userUid).setValue(true);
+        chatroom.userUids.put(userUid, true);
     }
 
     public static void leaveChatroom(ChatRoom chatroom) {
@@ -164,5 +174,6 @@ public class ChatRoom {
         String userUid = Utils.getCurrentUserUid();
         ref.child("/users/" + userUid + "/userChatroomsUids/" + chatroom.uid).removeValue();
         ref.child("/chatrooms/" + chatroom.uid + "/userUids/" + userUid).removeValue();
+        chatroom.userUids.remove(userUid);
     }
 }

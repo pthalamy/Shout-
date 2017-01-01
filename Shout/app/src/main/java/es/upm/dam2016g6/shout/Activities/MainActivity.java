@@ -32,6 +32,7 @@ import com.google.android.gms.location.LocationSettingsRequest;
 import com.google.android.gms.location.LocationSettingsResult;
 import com.google.android.gms.location.LocationSettingsStates;
 import com.google.android.gms.location.LocationSettingsStatusCodes;
+import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
@@ -83,8 +84,8 @@ public class MainActivity extends AppCompatActivity
     public HashMap<String, ChatRoom> chatroomsInRange = new HashMap<>();
 
     // Store to speed up location updates //
-    private GeoFire geoFireUsers;
-    private GeoFire geoFireChatrooms;
+    public GeoFire geoFireUsers;
+    public GeoFire geoFireChatrooms;
     private String userId;
     private GeoQuery mGeoQueryUsers;
     private GeoQuery mGeoQueryChatrooms;
@@ -390,7 +391,8 @@ public class MainActivity extends AppCompatActivity
             // to handle the case where the user grants the permission. See the documentation
             // for ActivityCompat#requestPermissions for more details.
             Log.d(TAG, "Permissions missing for location updates!");
-            return;
+            this.requestPermissions(new String[]{Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.ACCESS_COARSE_LOCATION},
+                    Utils.MY_PERMISSIONS_ACCESS_LOCATION);
         }
 
         LocationServices.FusedLocationApi.requestLocationUpdates(mGoogleApiClient, mLocationRequest, this);
@@ -420,9 +422,14 @@ public class MainActivity extends AppCompatActivity
 
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
-        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
-
-        // TODO: 28/11/16 Handle case where the user grants the permission
+        switch (requestCode) {
+            case Utils.MY_PERMISSIONS_ACCESS_LOCATION:
+                startLocationUpdates();
+                break;
+            default:
+                super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+                break;
+        }
     }
 
     @Override
@@ -442,46 +449,13 @@ public class MainActivity extends AppCompatActivity
         // Update location in user as well
         DatabaseReference ref = Utils.getDatabase().getReference();
         String userUid = Utils.getCurrentUserUid();
-        ref.child("/users/" + userUid + "/location/").setValue(mCurrentGeoLocation);
+        ref.child("/users/" + userUid + "/location/")
+                .setValue(new LatLng(mCurrentGeoLocation.latitude, mCurrentGeoLocation.longitude));
 
         // Update GeoQueries
         mGeoQueryUsers.setCenter(mCurrentGeoLocation);
         mGeoQueryChatrooms.setCenter(mCurrentGeoLocation);
     }
-
-//    public void onSaveInstanceState(Bundle savedInstanceState) {
-//        savedInstanceState.putBoolean(REQUESTING_LOCATION_UPDATES_KEY,
-//                mRequestingLocationUpdates);
-//        savedInstanceState.putParcelable(LOCATION_KEY, mCurrentLocation);
-//        savedInstanceState.putString(LAST_UPDATED_TIME_STRING_KEY, mLastUpdateTime);
-//        super.onSaveInstanceState(savedInstanceState);
-//    }
-//
-//    private void updateValuesFromBundle(Bundle savedInstanceState) {
-//        if (savedInstanceState != null) {
-//            // Update the value of mRequestingLocationUpdates from the Bundle, and
-//            // make sure that the Start Updates and Stop Updates buttons are
-//            // correctly enabled or disabled.
-//            if (savedInstanceState.keySet().contains(REQUESTING_LOCATION_UPDATES_KEY)) {
-//                mRequestingLocationUpdates = savedInstanceState.getBoolean(
-//                        REQUESTING_LOCATION_UPDATES_KEY);
-//            }
-//
-//            // Update the value of mCurrentLocation from the Bundle and update the
-//            // UI to show the correct latitude and longitude.
-//            if (savedInstanceState.keySet().contains(LOCATION_KEY)) {
-//                // Since LOCATION_KEY was found in the Bundle, we can be sure that
-//                // mCurrentLocationis not null.
-//                mCurrentLocation = savedInstanceState.getParcelable(LOCATION_KEY);
-//            }
-//
-//            // Update the value of mLastUpdateTime from the Bundle and update the UI.
-//            if (savedInstanceState.keySet().contains(LAST_UPDATED_TIME_STRING_KEY)) {
-//                mLastUpdateTime = savedInstanceState.getString(
-//                        LAST_UPDATED_TIME_STRING_KEY);
-//            }
-//        }
-//    }
 
     private static void deleteLocationFromFirebase(String uid) {
         DatabaseReference ref = Utils.getDatabase().getReference("locations");

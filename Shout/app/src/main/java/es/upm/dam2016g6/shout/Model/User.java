@@ -2,7 +2,6 @@ package es.upm.dam2016g6.shout.model;
 
 import android.util.Log;
 
-import com.firebase.geofire.GeoLocation;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
@@ -29,7 +28,6 @@ public class User {
     public String uid;
     public String name;
     public String facebookId;
-    public GeoLocation location;
     public Map<String, Boolean> userChatroomsUids = new HashMap<>();
 
     public User() {
@@ -59,7 +57,7 @@ public class User {
         if (currentUser != null)
             return currentUser;
 
-        DatabaseReference ref = Utils.getDatabase().getReference("users");
+        DatabaseReference ref = Utils.getDatabase().getReference("/users/");
         Query query = ref.orderByKey().equalTo(FirebaseAuth.getInstance().getCurrentUser().getUid());
         query.addValueEventListener(new ValueEventListener() {
             @Override

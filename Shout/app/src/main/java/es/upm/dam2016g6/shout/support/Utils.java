@@ -18,6 +18,7 @@ import com.google.firebase.database.FirebaseDatabase;
  */
 
 public class Utils {
+    public static final int MY_PERMISSIONS_ACCESS_LOCATION = 0x123;
     private static FirebaseDatabase mDatabase;
 
     public static FirebaseDatabase getDatabase() {
@@ -39,18 +40,13 @@ public class Utils {
                     != PackageManager.PERMISSION_GRANTED
                     && ActivityCompat.checkSelfPermission(callerActivity, Manifest.permission.ACCESS_COARSE_LOCATION)
                     != PackageManager.PERMISSION_GRANTED) {
-                // TODO: Consider calling
-                //    ActivityCompat#requestPermissions
-                // here to request the missing permissions, and then overriding
-                //   public void onRequestPermissionsResult(int requestCode, String[] permissions,
-                //                                          int[] grantResults)
-                // to handle the case where the user grants the permission. See the documentation
-                // for ActivityCompat#requestPermissions for more details.
-                return null;
+                callerActivity.requestPermissions(new String[]{Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.ACCESS_COARSE_LOCATION},
+                        MY_PERMISSIONS_ACCESS_LOCATION);
+                currentLocation = new GeoLocation(40.405057, -3.839404); // etsiinf by default
+            } else {
+                Location location = locationManager.getLastKnownLocation(locationManager.getBestProvider(criteria, false));
+                currentLocation = new GeoLocation(location.getLatitude(), location.getLongitude());
             }
-            Location location = locationManager.getLastKnownLocation(locationManager
-                    .getBestProvider(criteria, false));
-            currentLocation = new GeoLocation(location.getLatitude(), location.getLongitude());
         }
 
         return currentLocation;

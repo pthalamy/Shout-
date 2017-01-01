@@ -20,6 +20,7 @@ import android.widget.SeekBar;
 import android.widget.Spinner;
 import android.widget.TextView;
 
+import com.firebase.geofire.GeoLocation;
 import com.google.firebase.auth.FirebaseAuth;
 
 import es.upm.dam2016g6.shout.R;
@@ -109,8 +110,9 @@ public class ChatRoomCreationActivity extends AppCompatActivity
         Log.d(TAG, "onClick: createChatRoomIfValid");
         if (creationFormIsComplete()) {
             // Create chat room
+            GeoLocation loc = Utils.getCurrentLocation(this);
             ChatRoom chatroom = ChatRoom.writeNewChatRoom(et_title.getText().toString(), category, null,
-                    range, ttl, FirebaseAuth.getInstance().getCurrentUser().getUid(), Utils.getCurrentLocation(this));
+                    range, ttl, FirebaseAuth.getInstance().getCurrentUser().getUid(), loc);
 
             Intent upIntent = NavUtils.getParentActivityIntent(ChatRoomCreationActivity.this);
             upIntent.putExtra(MainActivity.FRAGMENT_TO_INFLATE, MainActivity.CHATROOMS_FRAGMENT_CREATION);
