@@ -3,10 +3,8 @@ package es.upm.dam2016g6.shout.fragments;
 
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
-import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.util.Pair;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -15,7 +13,6 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 
 import es.upm.dam2016g6.shout.R;
-import es.upm.dam2016g6.shout.model.Chat;
 import es.upm.dam2016g6.shout.model.ChatRoom;
 import es.upm.dam2016g6.shout.support.ChatRoomsIndexRecyclerViewAdapter;
 import es.upm.dam2016g6.shout.support.ListChatRoomViewHolder;
@@ -39,14 +36,14 @@ public class MyChatRoomsFragment extends Fragment {
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
-                                                          Bundle savedInstanceState) {
+                             Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         mView = inflater.inflate(R.layout.fragment_my_chat_rooms, container, false);
 
         // Store likes into a recycler view and configure it
-        RecyclerView rv = (RecyclerView) this.mView.findViewById(R.id.rv_nearby_chat_rooms);
+        RecyclerView rv = (RecyclerView) this.mView.findViewById(R.id.rv_my_chat_rooms);
         rv.setHasFixedSize(true);
-        LinearLayoutManager layoutManager = new GridLayoutManager(this.getActivity(), 2);
+        LinearLayoutManager layoutManager = new LinearLayoutManager(this.getActivity());
         layoutManager.setOrientation(LinearLayoutManager.VERTICAL);
         rv.setLayoutManager(layoutManager);
 
@@ -65,9 +62,10 @@ public class MyChatRoomsFragment extends Fragment {
         rv.setAdapter(adapter);
 
         return mView;
-
     }
 
-
+    public void accessChatroom(ChatRoom chatroom) {
+        // TODO: 30/12/16 Segue to chatroom discussion
+    }
 
 }

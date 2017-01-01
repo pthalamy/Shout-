@@ -44,6 +44,7 @@ dependencies {
     compile 'com.roughike:bottom-bar:2.0.2'
     testCompile 'junit:junit:4.12'
     compile 'com.firebase:geofire-android:2.1.1'
+    compile 'de.hdodenhof:circleimageview:2.1.0'
 }
 
 

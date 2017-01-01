@@ -6,6 +6,9 @@ import android.view.View;
 import android.widget.ImageButton;
 import android.widget.TextView;
 
+import de.hdodenhof.circleimageview.CircleImageView;
+import es.upm.dam2016g6.shout.R;
+
 /**
  * Created by pthalamy on 11/12/16.
  */
@@ -14,13 +17,27 @@ public class ListChatRoomViewHolder extends RecyclerView.ViewHolder {
     Context context;
 
     TextView tv_title;
-    TextView tv_created;
-    TextView tv_expires;
     TextView tv_category;
-    TextView tv_latest;
+    TextView tv_createdOn;
+    TextView tv_expiresIn;
+    TextView tv_latestText;
+    TextView tv_latestTextTime;
+    TextView tv_latestTextAuthor;
+    CircleImageView iv_thumbnail;
     ImageButton ib_star;
 
     public ListChatRoomViewHolder(View itemView) {
         super(itemView);
+
+        context = itemView.getContext();
+        tv_title = (TextView) itemView.findViewById(R.id.lcic_tv_title);
+        tv_createdOn = (TextView) itemView.findViewById(R.id.lcic_tv_createdOn);
+        tv_expiresIn = (TextView) itemView.findViewById(R.id.lcic_tv_expiresIn);
+        tv_category = (TextView) itemView.findViewById(R.id.lcic_tv_category);
+        iv_thumbnail = (CircleImageView) itemView.findViewById(R.id.lcic_iv_thumbnail);
+        tv_latestText = (TextView) itemView.findViewById(R.id.lcic_tv_lastText);
+        tv_latestTextAuthor = (TextView) itemView.findViewById(R.id.lcic_tv_lastAuthor);
+        tv_latestTextTime = (TextView) itemView.findViewById(R.id.lcic_tv_lastTextTime);
+        ib_star = (ImageButton) itemView.findViewById(R.id.lcic_ib_star);
     }
 }

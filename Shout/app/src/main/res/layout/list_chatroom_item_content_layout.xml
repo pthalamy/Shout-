@@ -1,36 +1,103 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
-    
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:layout_margin="2dp"
+    android:layout_centerVertical="true"
+    android:layout_centerHorizontal="true"
+    tools:showIn="@layout/list_chatroom_item_layout"
+    android:background="@color/card_white">
+
     <TextView
         android:id="@+id/lcic_tv_title"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content" />
+        android:layout_width="200dp"
+        android:layout_height="20dp"
+        android:layout_toRightOf="@+id/lcic_iv_thumbnail"
+        android:text="Title"
+        android:textColor="@color/colorPrimary"
+        android:textStyle="normal|bold" />
+
+    <TextView
+        android:id="@+id/lcic_tv_category"
+        android:layout_height="20dp"
+        android:layout_marginStart="5dp"
+        android:layout_toRightOf="@+id/lcic_tv_title"
+        android:layout_centerVertical="true"
+        android:text="Category"
+        android:textColor="@color/darkGray"
+        android:layout_width="80dp" />
 
     <TextView
         android:id="@+id/lcic_tv_lastText"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content" />
+        android:layout_width="200dp"
+        android:layout_height="12dp"
+        android:layout_toRightOf="@+id/lcic_iv_thumbnail"
+        android:layout_below="@+id/lcic_tv_title"
+        android:textColor="@color/darkGray"
+        android:text="No messages yet."
+        android:textSize="10sp" />
 
     <TextView
         android:id="@+id/lcic_tv_lastAuthor"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content" />
+        android:layout_width="200dp"
+        android:layout_height="12dp"
+        android:layout_toRightOf="@+id/lcic_iv_thumbnail"
+        android:layout_below="@+id/lcic_tv_lastText"
+        android:textColor="@color/darkGray"
+        android:text="None"
+        android:textSize="10sp" />
 
     <TextView
         android:id="@+id/lcic_tv_lastTextTime"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content" />
+        android:layout_width="200dp"
+        android:layout_height="10dp"
+        android:layout_toRightOf="@+id/lcic_iv_thumbnail"
+        android:layout_below="@+id/lcic_tv_lastAuthor"
+        android:textColor="@color/darkGray"
+        android:text="Last text time"
+        android:textSize="8sp" />
+
+    <TextView
+        android:id="@+id/lcic_tv_createdOn"
+        android:layout_marginTop="5dp"
+        android:layout_width="200dp"
+        android:layout_height="12dp"
+        android:layout_toRightOf="@+id/lcic_iv_thumbnail"
+        android:layout_below="@+id/lcic_tv_lastTextTime"
+        android:textColor="@color/darkGray"
+        android:text="Created on [...]"
+        android:textSize="10sp" />
+
+    <TextView
+        android:id="@+id/lcic_tv_expiresIn"
+        android:layout_width="200dp"
+        android:layout_height="12dp"
+        android:layout_toRightOf="@+id/lcic_iv_thumbnail"
+        android:layout_below="@+id/lcic_tv_createdOn"
+        android:textColor="@color/darkGray"
+        android:text="Expires in [...]"
+        android:textSize="10sp" />
 
     <ImageButton
         android:id="@+id/lcic_ib_star"
-        android:layout_width="10dp"
-        android:layout_height="10dp" />
-
-    <ImageView
-        android:id="@+id/lcic_iv_thumbnail"
+        android:layout_alignParentEnd="true"
+        android:layout_centerVertical="true"
+        android:layout_marginRight="5dp"
+        app:srcCompat="@android:drawable/btn_star_big_off"
+        android:layout_height="40dp"
         android:layout_width="wrap_content"
-        android:layout_height="wrap_content" />
+        android:background="@color/card_white" />
+
+    <de.hdodenhof.circleimageview.CircleImageView
+        android:id="@+id/lcic_iv_thumbnail"
+        android:layout_width="50dp"
+        android:layout_height="50dp"
+        android:layout_below="@+id/lcic_tv_title"
+        android:layout_alignParentStart="true"
+        app:srcCompat="@drawable/ic_shoutlogo" />
+
 
 </RelativeLayout>
