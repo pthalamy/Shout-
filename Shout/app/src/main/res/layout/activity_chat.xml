@@ -20,11 +20,13 @@
 
     <android.support.v7.widget.RecyclerView
         android:id="@+id/rv_chat_messages"
+        android:layout_below="@+id/toolbar_chat"
+        android:layout_above="@+id/send_message_layout"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:layout_marginTop="4dp"
-        android:layout_marginBottom="4dp"
-        android:background="@color/card_background"
+        android:layout_height="fill_parent"
+        android:layout_marginTop="2dp"
+        android:layout_marginBottom="2dp"
+        android:background="@color/card_white"
         />
 
      <LinearLayout
@@ -53,17 +55,18 @@
             android:layout_weight="1"
             android:layout_marginLeft="4dp"
             android:inputType="text"
+            android:foregroundTint="@color/colorPrimary"
             android:hint="Write a message..."/>
 
         <ImageButton
             android:id="@+id/btn_send"
             android:layout_width="40dp"
             android:layout_height="40dp"
-            android:alpha=".9"
             android:background="?selectableItemBackground"
             android:contentDescription="@string/app_name"
             android:padding="2dp"
             android:src="@drawable/ic_action_send"
-            android:tint="@color/colorAccent"/>
+            android:tint="@color/colorPrimary"
+            android:onClick="sendMessage"/>
     </LinearLayout>
 </RelativeLayout>

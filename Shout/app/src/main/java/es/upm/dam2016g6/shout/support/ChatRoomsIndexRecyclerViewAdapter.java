@@ -64,14 +64,23 @@ public class ChatRoomsIndexRecyclerViewAdapter extends FirebaseIndexRecyclerAdap
 
         // Get number of hours from creation and until expiration
         Date now = new Date();
-        long numHoursSinceCreation = (now.getTime() - chatroom.creationDate.getTime()) / (1000 * 3600);
-        long numHoursToExpiration = (chatroom.expirationDate.getTime() - now.getTime()) / (1000 * 3600);
-        viewHolder.tv_createdOn.setText("Created " + numHoursSinceCreation + "h ago");
-        viewHolder.tv_expiresIn.setText("Expires in " + numHoursToExpiration + "h");
+        long numHoursSinceCreation = (now.getTime() - chatroom.creationDate) / (1000 * 3600);
+        long numHoursToExpiration = (chatroom.expirationDate- now.getTime()) / (1000 * 3600);
+        if (numHoursSinceCreation < 72)
+            viewHolder.tv_createdOn.setText("Created " + numHoursSinceCreation + "h ago");
+        else
+            viewHolder.tv_createdOn.setText("Created " + numHoursSinceCreation / 24 + "d ago");
+        if (numHoursToExpiration < 72)
+            viewHolder.tv_expiresIn.setText("Expires in " + numHoursToExpiration + "h");
+        else
+            viewHolder.tv_expiresIn.setText("Expires in " + numHoursToExpiration / 24 + "d");
 
         viewHolder.tv_latestTextAuthor.setText(chatroom.lastTextAuthor);
-        viewHolder.tv_latestTextTime.setText(chatroom.lastTextTime != null ?
-                chatroom.lastTextTime.toLocaleString() : "");
+
+        if (chatroom.lastTextTime != 0)
+            viewHolder.tv_latestTextTime.setText(Utils.getDateStringFromTimestamp(chatroom.lastTextTime));
+        else // no text yet
+            viewHolder.tv_latestTextTime.setText("");
 
         // TODO: 30/12/16 Set maximum length for latest text preview
         viewHolder.tv_latestText.setText(chatroom.lastText);

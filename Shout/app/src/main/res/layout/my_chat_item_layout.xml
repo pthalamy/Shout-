@@ -4,6 +4,6 @@
     android:layout_height="wrap_content"
     >
 
-    <include layout="@layout/chat_item_content_layout" />
+    <include layout="@layout/my_chat_item_content_layout" />
 
 </FrameLayout>

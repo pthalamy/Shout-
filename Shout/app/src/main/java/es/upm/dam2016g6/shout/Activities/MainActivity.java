@@ -69,8 +69,10 @@ public class MainActivity extends AppCompatActivity
     private static final String LOCATION_KEY = "LK_MainActivity";
     private static final String LAST_UPDATED_TIME_STRING_KEY = "LUTSK_MainActivity";
     public static final String DISCOVERY_FRAGMENT = "DISCOVERY_FRAGMENT";
-    public static final String CHATROOMS_FRAGMENT_CREATION = "CHATROOMS_FRAGMENT_CREATE";
+    public static final String CHATROOMS_FRAGMENT_NEARBY = "CHATROOMS_FRAGMENT_NEARBY";
     public static final String FRAGMENT_TO_INFLATE = "FRAGMENT_TO_INFLATE";
+    public static final String CHATROOMS_FRAGMENT_MYCHATROOMS = "CHATROOMS_FRAGMENT_MYCHATROOMS";
+    public static final String PRIVATECONVERSATIONS_FRAGMENT = "PRIVATECONVERSATIONS_FRAGMENT";
 
     private boolean mRequestingLocationUpdates = true;
     private LocationRequest mLocationRequest;
@@ -110,11 +112,6 @@ public class MainActivity extends AppCompatActivity
         geoFireChatrooms = new GeoFire(Utils.getDatabase().getReference("chatroomLocations"));
         userId = Utils.getCurrentUserUid();
 
-//        if (savedInstanceState != null) {
-//            updateValuesFromBundle(savedInstanceState);
-//            return;
-//        }
-
         // Set up bottom bar if not previously done
         bottomBar.setOnTabSelectListener(new OnTabSelectListener() {
             @Override
@@ -139,8 +136,12 @@ public class MainActivity extends AppCompatActivity
         String param = intent.getStringExtra(MainActivity.FRAGMENT_TO_INFLATE);
         if (param != null) {
             switch (param) {
-                case CHATROOMS_FRAGMENT_CREATION:
+                case CHATROOMS_FRAGMENT_NEARBY:
+                case CHATROOMS_FRAGMENT_MYCHATROOMS:
                     bottomBar.selectTabAtPosition(1);
+                    break;
+                case PRIVATECONVERSATIONS_FRAGMENT:
+                    bottomBar.selectTabAtPosition(2);
                     break;
                 default:
                     bottomBar.selectTabAtPosition(0);

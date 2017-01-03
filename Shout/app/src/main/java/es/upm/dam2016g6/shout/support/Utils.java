@@ -13,6 +13,9 @@ import com.firebase.geofire.GeoLocation;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.FirebaseDatabase;
 
+import java.text.SimpleDateFormat;
+import java.util.Date;
+
 /**
  * Created by pthalamy on 5/12/16.
  */
@@ -70,5 +73,30 @@ public class Utils {
 
     public static void resetCurrentUserUid() {
         currentUserUid = null;
+    }
+
+    public static String getDateStringFromTimestamp(long timestamp) {
+        SimpleDateFormat sfd = new SimpleDateFormat("dd-MM-yyyy HH:mm:ss");
+        return sfd.format(new Date(timestamp));
+    }
+
+    public static String getUserDistanceToLatLng(double lat, double lng) {
+        if (currentLocation == null)
+            return "Unavailable";
+
+        Location loc1 = new Location("");
+        loc1.setLatitude(currentLocation.latitude);
+        loc1.setLongitude(currentLocation.longitude);
+
+        Location loc2 = new Location("");
+        loc2.setLatitude(lat);
+        loc2.setLongitude(lng);
+
+        float distanceInMeters = loc1.distanceTo(loc2);
+
+        if (distanceInMeters < 1000)
+            return (long)distanceInMeters + "m";
+        else
+            return (long)(distanceInMeters / 1000) + "km";
     }
 }

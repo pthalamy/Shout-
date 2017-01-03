@@ -54,6 +54,7 @@ public class ChatRoomsFragment extends android.support.v4.app.Fragment {
         for (int i = 0; i < viewPager.getAdapter().getCount(); i++)
             tabLayout.addTab(tabLayout.newTab().setText(viewPager.getAdapter().getPageTitle(i)));
         tabLayout.setupWithViewPager(viewPager);
+        viewPager.setCurrentItem(1); // My Chat rooms as default
 
         // Add toolbar to fragment
         Toolbar toolbar = (Toolbar) mView.findViewById(R.id.toolbar_chat_rooms);

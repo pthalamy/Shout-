@@ -41,8 +41,8 @@ public class ChatRoomCreationActivity extends AppCompatActivity
 
     private Image thumbnail = null;
     private String category = "";
-    private int range = 0;
-    private int ttl = 0;
+    private int range = 100;
+    private int ttl = 1;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -79,9 +79,51 @@ public class ChatRoomCreationActivity extends AppCompatActivity
         sb_range = (SeekBar) findViewById(R.id.sb_crc_range);
         sb_range.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
             public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser){
-                // TODO: 3/1/17 Replace by discrete slider with predefined values for each step
-                ChatRoomCreationActivity.this.range = progress;
-                tv_range.setText(Integer.toString(range) + "m");
+                switch(progress) {
+                    case 0: // 100m
+                        range = 100;
+                        tv_range.setText(Integer.toString(range)+ "m");
+                        break;
+                    case 1: // 250m
+                        range = 250;
+                        tv_range.setText(Integer.toString(range)+ "m");
+                    break;
+                    case 2: // 500m
+                        range = 500;
+                        tv_range.setText(Integer.toString(range)+ "m");
+                    break;
+                    case 3: // 1km
+                        range = 1000;
+                        tv_range.setText(Integer.toString(range / 1000)+ "km");
+                    break;
+                    case 4: // 2km
+                        range = 2000;
+                        tv_range.setText(Integer.toString(range / 1000)+ "km");
+                    break;
+                    case 5: // 3km
+                        range = 3000;
+                        tv_range.setText(Integer.toString(range / 1000)+ "km");
+                    break;
+                    case 6: // 5km
+                        range = 5000;
+                        tv_range.setText(Integer.toString(range / 1000)+ "km");
+                    break;
+                    case 7: // 10km
+                        range = 10000;
+                        tv_range.setText(Integer.toString(range / 1000)+ "km");
+                    break;
+                    case 8: // 15km
+                        range = 15000;
+                        tv_range.setText(Integer.toString(range / 1000)+ "km");
+                    break;
+                    case 9: // 25km
+                        range = 25000;
+                        tv_range.setText(Integer.toString(range / 1000)+ "km");
+                    break;
+                    default: Log.w(TAG, "Range -> OnProgressChange: Progress value out of range!!!");
+                        return;
+                }
+
             }
 
             public void onStartTrackingTouch(SeekBar seekBar) {
@@ -94,9 +136,50 @@ public class ChatRoomCreationActivity extends AppCompatActivity
         sb_ttl = (SeekBar) findViewById(R.id.sb_crc_ttl);
         sb_ttl.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
             public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser){
-                // TODO: 3/1/17 Replace by discrete slider with predefined values for each step
-                ChatRoomCreationActivity.this.ttl = progress;
-                tv_ttl.setText(Integer.toString(ttl) + "h");
+                                switch(progress) {
+                    case 0: // 1h
+                        ttl = 1;
+                        tv_ttl.setText(Integer.toString(ttl) + "h");
+                        break;
+                    case 1: // 2h
+                        ttl = 2;
+                        tv_ttl.setText(Integer.toString(ttl) + "h");
+                    break;
+                    case 2: // 3h
+                        ttl = 3;
+                        tv_ttl.setText(Integer.toString(ttl) + "h");
+                    break;
+                    case 3: // 6h
+                        ttl = 6;
+                        tv_ttl.setText(Integer.toString(ttl) + "h");
+                    break;
+                    case 4: // 12h
+                        ttl = 12;
+                        tv_ttl.setText(Integer.toString(ttl) + "h");
+                    break;
+                    case 5: // 24h
+                        ttl = 24;
+                        tv_ttl.setText(Integer.toString(ttl) + "h");
+                    break;
+                    case 6: // 48h
+                        ttl = 48;
+                        tv_ttl.setText(Integer.toString(ttl) + "h");
+                    break;
+                    case 7: // 3d
+                        ttl = 72;
+                        tv_ttl.setText(Integer.toString(ttl / 24) + "d");
+                    break;
+                    case 8: // 5d
+                        ttl = 120;
+                        tv_ttl.setText(Integer.toString(ttl / 24) + "d");
+                    break;
+                    case 9: // 7d
+                        ttl = 168;
+                        tv_ttl.setText(Integer.toString(ttl / 24) + "d");
+                    break;
+                    default: Log.w(TAG, "TTL -> OnProgressChange: Progress value out of range!!!");
+                        return;
+                }
             }
 
             public void onStartTrackingTouch(SeekBar seekBar) {
@@ -117,7 +200,7 @@ public class ChatRoomCreationActivity extends AppCompatActivity
                     range, ttl, FirebaseAuth.getInstance().getCurrentUser().getUid(), loc);
 
             Intent upIntent = NavUtils.getParentActivityIntent(ChatRoomCreationActivity.this);
-            upIntent.putExtra(MainActivity.FRAGMENT_TO_INFLATE, MainActivity.CHATROOMS_FRAGMENT_CREATION);
+            upIntent.putExtra(MainActivity.FRAGMENT_TO_INFLATE, MainActivity.CHATROOMS_FRAGMENT_NEARBY);
 
             finish();
         } else {
@@ -148,7 +231,7 @@ public class ChatRoomCreationActivity extends AppCompatActivity
             public void onClick(DialogInterface dialog, int id) {
                 // User clicked OK button
                 Intent upIntent = NavUtils.getParentActivityIntent(ChatRoomCreationActivity.this);
-                upIntent.putExtra(MainActivity.FRAGMENT_TO_INFLATE, MainActivity.CHATROOMS_FRAGMENT_CREATION);
+                upIntent.putExtra(MainActivity.FRAGMENT_TO_INFLATE, MainActivity.CHATROOMS_FRAGMENT_NEARBY);
                 ChatRoomCreationActivity.this.finish();
             }
         });
@@ -172,7 +255,7 @@ public class ChatRoomCreationActivity extends AppCompatActivity
                 Intent upIntent = NavUtils.getParentActivityIntent(this);
                 // This activity is part of this app's task, so simply
                 // navigate up to the logical parent activity.
-                upIntent.putExtra(MainActivity.FRAGMENT_TO_INFLATE, MainActivity.CHATROOMS_FRAGMENT_CREATION);
+                upIntent.putExtra(MainActivity.FRAGMENT_TO_INFLATE, MainActivity.CHATROOMS_FRAGMENT_NEARBY);
                 NavUtils.navigateUpTo(this, upIntent);
                 finish();
                 return true;

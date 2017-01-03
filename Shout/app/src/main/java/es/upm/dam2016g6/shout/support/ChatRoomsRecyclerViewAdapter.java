@@ -39,10 +39,18 @@ public class ChatRoomsRecyclerViewAdapter extends FirebaseRecyclerAdapter<ChatRo
 
         // Get number of hours from creation and until expiration
         Date now = new Date();
-        long numHoursSinceCreation = (now.getTime() - chatroom.creationDate.getTime()) / (1000 * 3600);
-        long numHoursToExpiration = (chatroom.expirationDate.getTime() - now.getTime()) / (1000 * 3600);
-        viewHolder.tv_created.setText("Created " + numHoursSinceCreation + "h ago");
-        viewHolder.tv_expires.setText("Expires in " + numHoursToExpiration + "h");
+        long numHoursSinceCreation = (now.getTime() - chatroom.creationDate) / (1000 * 3600);
+        long numHoursToExpiration = (chatroom.expirationDate- now.getTime()) / (1000 * 3600);
+
+        if (numHoursSinceCreation < 72)
+            viewHolder.tv_created.setText("Created " + numHoursSinceCreation + "h ago");
+        else
+            viewHolder.tv_created.setText("Created " + numHoursSinceCreation / 24 + "d ago");
+
+        if (numHoursToExpiration < 72)
+            viewHolder.tv_expires.setText("Expires in " + numHoursToExpiration + "h");
+        else
+            viewHolder.tv_expires.setText("Expires in " + numHoursToExpiration / 24 + "d");
 
         // Glide image in
         Glide.with(viewHolder.context)

@@ -26,6 +26,7 @@ public class ListChatRoomViewHolder extends RecyclerView.ViewHolder implements V
     CircleImageView iv_thumbnail;
     ImageButton ib_star;
     MyViewHolderClickListener mListener;
+    // TODO: 3/1/17 Add distance to chat room
 
     public ListChatRoomViewHolder(View itemView, MyViewHolderClickListener listener) {
         super(itemView);

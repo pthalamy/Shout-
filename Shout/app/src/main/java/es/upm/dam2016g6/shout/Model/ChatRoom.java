@@ -1,7 +1,5 @@
 package es.upm.dam2016g6.shout.model;
 
-import android.os.Parcel;
-import android.os.Parcelable;
 import android.util.Log;
 
 import com.firebase.geofire.GeoFire;
@@ -35,12 +33,12 @@ public class ChatRoom {
     public String title;
     public String category;
     public String imageUrl;
-    public Date creationDate;
-    public Date expirationDate;
+    public long creationDate;
+    public long expirationDate;
     public String creatorUid;
     public String lastText;
     public String lastTextAuthor;
-    public Date lastTextTime;
+    public long lastTextTime;
     public int range;
     public Map<String, Boolean> userUids = new HashMap<>();
 
@@ -54,16 +52,15 @@ public class ChatRoom {
         this.title = title;
         this.category = category;
         this.imageUrl = imageUrl != null ? imageUrl : defaultImageUrl;
+        // Range is in meters
         this.range = range;
-        this.creationDate = new Date();
-        // Let's consider for now that ttl is a number of hours -> we want milliseconds for epoch
-        // TODO: 5/12/16  Improve this.
-        long expirationDateEpoch = creationDate.getTime() + ttl * 3600 * 1000;
-        this.expirationDate = new Date(expirationDateEpoch);
+        this.creationDate = new Date().getTime();
+        // ttl is in hours, hence ttlms = ttl * 3600 * 1000
+        this.expirationDate = new Date().getTime() + ttl * 3600 * 1000;
         this.creatorUid = creatorUid;
         this.lastText = "No messages yet.";
         this.lastTextAuthor = "";
-        this.lastTextTime = null;
+        this.lastTextTime = 0;
         userUids.put(creatorUid, true);
     }
 
