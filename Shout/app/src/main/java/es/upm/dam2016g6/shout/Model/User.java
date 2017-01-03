@@ -79,4 +79,8 @@ public class User {
         return userChatroomsUids;
     }
 
+    @Exclude
+    public boolean isCurrentUser() {
+        return this.uid == Utils.getCurrentUserUid();
+    }
 }

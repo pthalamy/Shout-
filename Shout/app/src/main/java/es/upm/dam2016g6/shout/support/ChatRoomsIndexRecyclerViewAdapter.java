@@ -47,10 +47,10 @@ public class ChatRoomsIndexRecyclerViewAdapter extends FirebaseIndexRecyclerAdap
            public void onChatroomSelected(View caller, int position) {
                Log.d(TAG, "OnClick: onChatroomSelected");
                ChatRoom chatroom = ChatRoomsIndexRecyclerViewAdapter.this.getItem(position);
-               Intent intent = new Intent(parent.getContext(), ChatActivity.class);
+               Intent intent = new Intent(caller.getContext(), ChatActivity.class);
                intent.putExtra(ChatActivity.CHAT_UID, chatroom.uid);
                intent.putExtra(ChatActivity.CHAT_TARGET, ChatActivity.CHAT_TARGET_CHATROOM);
-               parent.getContext().startActivity(intent);
+               caller.getContext().startActivity(intent);
            }
        });
 

@@ -10,7 +10,6 @@ import android.support.v7.widget.Toolbar;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
@@ -28,9 +27,11 @@ import org.json.JSONObject;
 import java.util.ArrayList;
 import java.util.List;
 
-import es.upm.dam2016g6.shout.model.FacebookLike;
+import de.hdodenhof.circleimageview.CircleImageView;
 import es.upm.dam2016g6.shout.R;
+import es.upm.dam2016g6.shout.model.FacebookLike;
 import es.upm.dam2016g6.shout.support.MyLikesRecyclerViewAdapter;
+import es.upm.dam2016g6.shout.support.Utils;
 
 
 /**
@@ -121,12 +122,12 @@ public class MyProfileFragment extends android.support.v4.app.Fragment {
 
     private void loadUserData(View view) {
         FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
-        String profileImgUrl = user.getPhotoUrl().toString();
+        String profileImgUrl = Utils.getFacebookProfilePictureFromID(AccessToken.getCurrentAccessToken().getUserId());
 
         // Load profile picture from Firebase
         Glide.with(this)
                 .load(profileImgUrl)
-                .into((ImageView) mView.findViewById(R.id.img_profilePic));
+                .into((CircleImageView) mView.findViewById(R.id.img_profilePic));
 
         ((TextView) mView.findViewById(R.id.tv_welcome)).setText(user.getDisplayName());
         // Store likes into a recycler view and configure it
@@ -139,23 +140,17 @@ public class MyProfileFragment extends android.support.v4.app.Fragment {
         // Retrieve Facebook User Likes from the Graph API
         FacebookSdk.addLoggingBehavior(LoggingBehavior.REQUESTS);
         /* make the API call */
-        GraphRequest request = GraphRequest.newMeRequest(
-                AccessToken.getCurrentAccessToken(),
-                new GraphRequest.GraphJSONObjectCallback() {
-                    @Override
-                    public void onCompleted(
-                            JSONObject object,
-                            GraphResponse response) {
-                        // Handle result
+        GraphRequest.Callback callback = new GraphRequest.Callback() {
+            @Override
+            public void onCompleted(GraphResponse response) {
+                                          // Handle result
                         try {
-//                            System.out.println(response);
+                            JSONObject object = response.getJSONObject();
                             JSONArray JSONFbLikes = object.getJSONObject("likes").getJSONArray("data");
-//                            System.out.println(JSONFbLikes);
                             fbLikes =  new ArrayList<FacebookLike>(JSONFbLikes.length());
 
                             for (int i = 0; i < JSONFbLikes.length(); i++) {
                                 JSONObject fbLike = JSONFbLikes.getJSONObject(i);
-//                                System.out.println(fbLike.getString("name"));
                                 // Instantiate new like and fetch page image asynchronously
                                 fbLikes.add(new FacebookLike(fbLike.getString("name"), fbLike.getString("id")));
                             }
@@ -166,12 +161,8 @@ public class MyProfileFragment extends android.support.v4.app.Fragment {
                         } catch (Throwable t) {
                             System.err.println(t);
                         }
-                    }
-                });
-
-        Bundle parameters = new Bundle();
-        parameters.putString("fields", "likes");
-        request.setParameters(parameters);
-        request.executeAsync();
+            }
+        };
+        Utils.getFacebookLikesForID(AccessToken.getCurrentAccessToken().getUserId(), callback);
     }
 }

@@ -1,14 +1,17 @@
 package es.upm.dam2016g6.shout.activities;
 
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.NavUtils;
 import android.support.v7.app.ActionBar;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
+import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.EditText;
@@ -146,6 +149,18 @@ public class ChatActivity extends AppCompatActivity {
         et_chat_message.setText("");
     }
 
+    // Toolbar and Menu Methods
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        // Inflate the menu; this adds items to the action bar if it is present.
+        if (this.chatTarget.equals(CHAT_TARGET_CHATROOM))
+            this.getMenuInflater().inflate(R.menu.chatroom_chat_menu, menu);
+//        else
+//            this.getMenuInflater().inflate(R.menu.chatroom_chat_menu, menu);
+
+        return true;
+    }
+
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
@@ -158,11 +173,44 @@ public class ChatActivity extends AppCompatActivity {
                     upIntent.putExtra(MainActivity.FRAGMENT_TO_INFLATE, MainActivity.CHATROOMS_FRAGMENT_MYCHATROOMS);
                 else // user
                     upIntent.putExtra(MainActivity.FRAGMENT_TO_INFLATE, MainActivity.PRIVATECONVERSATIONS_FRAGMENT);
-
                 NavUtils.navigateUpTo(this, upIntent);
-                finish();
+                return true;
+            case R.id.action_leave:
+                // 1. Instantiate an AlertDialog.Builder with its constructor
+                AlertDialog.Builder builder = new AlertDialog.Builder(this);
+                // 2. Chain together various setter methods to set the dialog characteristics
+                // Add the buttons
+                builder.setPositiveButton(R.string.confirm, new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int id) {
+                        // User clicked OK button
+                        ChatRoom.leaveChatroom(chatroom);
+                        Intent upIntent = NavUtils.getParentActivityIntent(ChatActivity.this);
+                        upIntent.putExtra(MainActivity.FRAGMENT_TO_INFLATE, MainActivity.CHATROOMS_FRAGMENT_MYCHATROOMS);
+                        ChatActivity.this.finish();
+                    }
+                });
+                builder.setNegativeButton(R.string.cancel, new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int id) {
+                        // User cancelled the dialog
+                    }
+                });
+                builder.setMessage(R.string.leaveChatroom_cancel_dialog_message)
+                        .setTitle(R.string.leaveChatroom_cancel_dialog_title);
+                // 3. Get the AlertDialog from create()
+                AlertDialog dialog = builder.create();
+                dialog.show();
+
+                return true;
+            case R.id.action_showMembers:
+                Intent intent = new Intent(this, ShowUserListActivity.class);
+                String keyRef = "/chatrooms/" + chatroom.uid + "/userUids/";
+                intent.putExtra(ShowUserListActivity.REF_PATH, keyRef);
+                intent.putExtra(ShowUserListActivity.NUM_MEMBERS, chatroom.userUids.size());
+                this.startActivity(intent);
+
                 return true;
         }
+
 
         return super.onOptionsItemSelected(item);
     }

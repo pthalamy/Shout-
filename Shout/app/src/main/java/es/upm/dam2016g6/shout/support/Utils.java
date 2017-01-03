@@ -7,8 +7,13 @@ import android.content.pm.PackageManager;
 import android.location.Criteria;
 import android.location.Location;
 import android.location.LocationManager;
+import android.os.Bundle;
 import android.support.v4.app.ActivityCompat;
 
+import com.facebook.AccessToken;
+import com.facebook.FacebookSdk;
+import com.facebook.GraphRequest;
+import com.facebook.LoggingBehavior;
 import com.firebase.geofire.GeoLocation;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.FirebaseDatabase;
@@ -98,5 +103,26 @@ public class Utils {
             return (long)distanceInMeters + "m";
         else
             return (long)(distanceInMeters / 1000) + "km";
+    }
+
+    public static String getFacebookProfilePictureFromID(String fbid) {
+        return "https://graph.facebook.com/"
+                + fbid + "/picture?type=large&w‌​idth=720&height=720";
+    }
+
+    public static void getFacebookLikesForID(String fbId, GraphRequest.Callback callback) {
+        // Retrieve My Facebook User Likes from the Graph API
+        FacebookSdk.addLoggingBehavior(LoggingBehavior.REQUESTS);
+
+        /* make the API call */
+        GraphRequest request = GraphRequest.newGraphPathRequest(
+                AccessToken.getCurrentAccessToken(),
+                fbId,
+                callback);
+
+        Bundle parameters = new Bundle();
+        parameters.putString("fields", "likes");
+        request.setParameters(parameters);
+        request.executeAsync();
     }
 }

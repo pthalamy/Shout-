@@ -1,0 +1,107 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/activity_profile"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".fragments.MyProfileFragment"
+    android:background="@color/white">
+
+
+    <android.support.v7.widget.Toolbar
+        android:id="@+id/toolbar_profile"
+        android:layout_width="match_parent"
+        android:layout_height="?attr/actionBarSize"
+        android:background="?attr/colorPrimary"
+        android:elevation="4dp"
+        android:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar"
+        app:popupTheme="@style/ThemeOverlay.AppCompat.Dark"
+        android:layout_alignParentTop="true"
+        android:layout_alignParentStart="true" />
+
+    <TextView
+        android:id="@+id/profile_tv_name"
+        android:text="@string/profile_name"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerHorizontal="true"
+        android:layout_below="@+id/toolbar_profile"
+        android:layout_marginTop="20dp"
+        android:textStyle="normal|bold"
+        android:textSize="20sp"
+        android:textColor="@color/colorPrimary" />
+
+    <de.hdodenhof.circleimageview.CircleImageView
+        android:id="@+id/profile_civ_profilePic"
+        android:layout_width="170dp"
+        android:layout_height="170dp"
+        app:srcCompat="@drawable/com_facebook_profile_picture_blank_portrait"
+        android:contentDescription="@string/fb_profile_picture"
+        android:layout_marginTop="20dp"
+        android:layout_below="@+id/profile_tv_name"
+        android:layout_centerHorizontal="true"
+        />
+
+    <RelativeLayout
+        android:id="@+id/profile_ll_actions"
+        android:layout_width="match_parent"
+        android:layout_height="70dp"
+        android:layout_below="@id/profile_civ_profilePic"
+        android:layout_marginTop="10dp"
+        android:layout_marginBottom="5dp"
+        android:layout_centerHorizontal="true">
+
+        <Button
+            android:id="@+id/profile_bt_friendList"
+            android:layout_width="130dp"
+            android:layout_height="wrap_content"
+            android:layout_centerVertical="true"
+            android:layout_marginStart="30dp"
+            android:text="ADD FRIEND"
+            android:backgroundTint="@color/colorPrimary"
+            android:maxLines="1"
+            android:textColor="@color/white"
+            android:scaleType="fitXY" />
+
+        <Button
+            android:id="@+id/profile_bt_sendMessage"
+            android:layout_width="130dp"
+            android:layout_height="wrap_content"
+            android:layout_alignBaseline="@id/profile_bt_friendList"
+            android:layout_alignParentEnd="true"
+            android:layout_marginStart="25dp"
+            android:layout_marginEnd="30dp"
+            android:maxLines="1"
+            android:text="SEND MESSAGE"
+            android:backgroundTint="@color/colorPrimary"
+            android:textColor="@color/white"
+            />
+    </RelativeLayout>
+
+    <TextView
+        android:id="@+id/profile_tv_commonLikes"
+        android:text="@string/common_fb_likes_label"
+        android:layout_width="match_parent"
+        android:textStyle="normal|bold"
+        android:textSize="18sp"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="20dp"
+        android:layout_below="@+id/profile_ll_actions"
+        android:layout_alignParentStart="true"
+        android:layout_marginStart="13dp"
+        android:textColor="@color/colorPrimary"/>
+
+    <android.support.v7.widget.RecyclerView
+        android:id="@+id/profile_rv_commonLikes"
+        android:layout_width="match_parent"
+        android:layout_height="150dp"
+        android:layout_alignParentBottom="true"
+        android:layout_alignParentStart="true"
+        android:layout_below="@+id/profile_tv_commonLikes"
+        android:layout_marginLeft="8dp"
+        android:layout_marginRight="8dp"
+        android:background="@color/white"/>
+
+
+</RelativeLayout>

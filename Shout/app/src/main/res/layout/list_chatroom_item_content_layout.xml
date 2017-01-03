@@ -64,6 +64,7 @@
         android:textColor="@color/darkGray"
         android:text="Last text time"
         android:textSize="8sp"
+        android:maxLines="1"
         android:textStyle="normal|italic"/>
 
     <TextView
