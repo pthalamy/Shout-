@@ -1,5 +1,7 @@
 package es.upm.dam2016g6.shout.model;
 
+import android.os.Parcel;
+import android.os.Parcelable;
 import android.util.Log;
 
 import com.firebase.geofire.GeoFire;
@@ -176,4 +178,5 @@ public class ChatRoom {
         ref.child("/chatrooms/" + chatroom.uid + "/userUids/" + userUid).removeValue();
         chatroom.userUids.remove(userUid);
     }
+
 }

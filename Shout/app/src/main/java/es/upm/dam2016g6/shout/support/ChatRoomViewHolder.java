@@ -25,6 +25,7 @@ public class ChatRoomViewHolder extends RecyclerView.ViewHolder {
     Button bt_join;
     ImageView imageView;
 
+
     public ChatRoomViewHolder(View itemView) {
         super(itemView);
 

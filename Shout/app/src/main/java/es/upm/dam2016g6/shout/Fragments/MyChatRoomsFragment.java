@@ -64,8 +64,4 @@ public class MyChatRoomsFragment extends Fragment {
         return mView;
     }
 
-    public void accessChatroom(ChatRoom chatroom) {
-        // TODO: 30/12/16 Segue to chatroom discussion
-    }
-
 }

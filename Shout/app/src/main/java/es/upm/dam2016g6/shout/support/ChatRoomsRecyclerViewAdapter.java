@@ -56,7 +56,7 @@ public class ChatRoomsRecyclerViewAdapter extends FirebaseRecyclerAdapter<ChatRo
 
         viewHolder.bt_join.setTag(chatroom);
         String userUid = Utils.getCurrentUserUid();
-        if (!chatroom.usersUids.containsKey(userUid)) {
+        if (!chatroom.userUids.containsKey(userUid)) {
             setButtonJoin(viewHolder.bt_join);
         } else { // User already in chatroom, cannot join again
             setButtonLeave(viewHolder.bt_join);

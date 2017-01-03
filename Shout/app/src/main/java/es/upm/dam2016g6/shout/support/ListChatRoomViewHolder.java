@@ -13,7 +13,7 @@ import es.upm.dam2016g6.shout.R;
  * Created by pthalamy on 11/12/16.
  */
 
-public class ListChatRoomViewHolder extends RecyclerView.ViewHolder {
+public class ListChatRoomViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener  {
     Context context;
 
     TextView tv_title;
@@ -25,8 +25,9 @@ public class ListChatRoomViewHolder extends RecyclerView.ViewHolder {
     TextView tv_latestTextAuthor;
     CircleImageView iv_thumbnail;
     ImageButton ib_star;
+    MyViewHolderClickListener mListener;
 
-    public ListChatRoomViewHolder(View itemView) {
+    public ListChatRoomViewHolder(View itemView, MyViewHolderClickListener listener) {
         super(itemView);
 
         context = itemView.getContext();
@@ -39,5 +40,25 @@ public class ListChatRoomViewHolder extends RecyclerView.ViewHolder {
         tv_latestTextAuthor = (TextView) itemView.findViewById(R.id.lcic_tv_lastAuthor);
         tv_latestTextTime = (TextView) itemView.findViewById(R.id.lcic_tv_lastTextTime);
         ib_star = (ImageButton) itemView.findViewById(R.id.lcic_ib_star);
+
+        mListener = listener;
+
+        ib_star.setOnClickListener(this);
+        itemView.setOnClickListener(this);
+    }
+
+
+    @Override
+    public void onClick(View view) {
+        if (view instanceof ImageButton){
+            mListener.onStar((ImageButton) view, this.getAdapterPosition());
+        } else {
+            mListener.onChatroomSelected(view, this.getAdapterPosition());
+        }
+    }
+
+    public static interface MyViewHolderClickListener {
+        public void onStar(ImageButton callerImageButton, int position);
+        public void onChatroomSelected(View caller, int position);
     }
 }

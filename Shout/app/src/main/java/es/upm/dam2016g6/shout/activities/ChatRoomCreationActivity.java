@@ -79,6 +79,7 @@ public class ChatRoomCreationActivity extends AppCompatActivity
         sb_range = (SeekBar) findViewById(R.id.sb_crc_range);
         sb_range.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
             public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser){
+                // TODO: 3/1/17 Replace by discrete slider with predefined values for each step
                 ChatRoomCreationActivity.this.range = progress;
                 tv_range.setText(Integer.toString(range) + "m");
             }
@@ -93,6 +94,7 @@ public class ChatRoomCreationActivity extends AppCompatActivity
         sb_ttl = (SeekBar) findViewById(R.id.sb_crc_ttl);
         sb_ttl.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
             public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser){
+                // TODO: 3/1/17 Replace by discrete slider with predefined values for each step
                 ChatRoomCreationActivity.this.ttl = progress;
                 tv_ttl.setText(Integer.toString(ttl) + "h");
             }
