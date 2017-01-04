@@ -188,7 +188,7 @@ public class MainActivity extends AppCompatActivity
 
                     @Override
                     public void onCancelled(DatabaseError databaseError) {
-                        Log.w(TAG, "getChatroomInRange:onCancelled", databaseError.toException());
+                        Log.w(TAG, "getUsersInRange:onCancelled", databaseError.toException());
                     }
                 });
             }
@@ -224,7 +224,7 @@ public class MainActivity extends AppCompatActivity
         });
 
         // creates a new query around user's location, with a radius of discoverRadius kilometers
-        mGeoQueryChatrooms = geoFireUsers.queryAtLocation(mCurrentGeoLocation, discoveryRadius);
+        mGeoQueryChatrooms = geoFireChatrooms.queryAtLocation(mCurrentGeoLocation, discoveryRadius);
         mGeoQueryChatrooms.addGeoQueryEventListener(new GeoQueryEventListener() {
             @Override
             public void onKeyEntered(String key, GeoLocation location) {

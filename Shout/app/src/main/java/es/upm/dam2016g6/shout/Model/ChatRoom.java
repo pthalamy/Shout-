@@ -27,7 +27,7 @@ public class ChatRoom {
     private static final String TAG = "TAG_" + ChatRoom.class.getSimpleName();
     private static DatabaseReference mChatroomsReference = null;
     private static HashMap<String, ChatRoom> chatrooms = new HashMap<>();
-    private static final String defaultImageUrl = "http://shushi168.com/data/out/193/37127382-random-image.png";
+    private static final String defaultImageUrl = "http://www.clipartkid.com/images/266/shouting-has-replaced-public-discourse-argues-jerry-shenk-PDQ821-clipart.jpg";
 
     public String uid;
     public String title;
