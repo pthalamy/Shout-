@@ -175,23 +175,9 @@ public class ProfileActivity extends AppCompatActivity {
                 public void onDataChange(DataSnapshot dataSnapshot) {
                     mCurrentUser = dataSnapshot.getValue(User.class);
                     if (mCurrentUser.friends.containsKey(user.uid)) { // Current user already has other user in friendlist
-                        bt_addFriend.setText("REMOVE FRIEND");
-                        bt_addFriend.setOnClickListener(new View.OnClickListener() {
-                            @Override
-                            public void onClick(View view) {
-                                mCurrentUser.removeFriend(user.uid);
-                                bt_addFriend.setText("ADD FRIEND");
-                            }
-                        });
-                    } else { // They are no friends yet
-                        bt_addFriend.setText("ADD FRIEND");
-                        bt_addFriend.setOnClickListener(new View.OnClickListener() {
-                            @Override
-                            public void onClick(View view) {
-                                mCurrentUser.addFriend(user.uid);
-                                bt_addFriend.setText("REMOVE FRIEND");
-                            }
-                        });
+                        setButtonRemove();
+                    } else { // They are not friends yet
+                        setButtonAdd();
                     }
 
                     if (mCurrentUser.privateChats.containsValue(user.uid)) { // Chat between the two already exists
@@ -241,5 +227,28 @@ public class ProfileActivity extends AppCompatActivity {
 
         MyLikesRecyclerViewAdapter adapter = new MyLikesRecyclerViewAdapter(fbCommonLikes);
         rv_commonLikes.setAdapter(adapter);
+    }
+
+    public void setButtonAdd() {
+        bt_addFriend.setText("ADD FRIEND");
+        bt_addFriend.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                mCurrentUser.addFriend(user.uid);
+                setButtonRemove();
+            }
+        });
+    }
+
+    public void setButtonRemove() {
+        bt_addFriend.setText("REMOVE FRIEND");
+        bt_addFriend.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                mCurrentUser.removeFriend(user.uid);
+                setButtonAdd();
+            }
+        });
+
     }
 }

@@ -29,6 +29,7 @@ public class ShowUserListActivity extends AppCompatActivity {
     private String refPath;
     private DatabaseReference keyRef;
     private String mTarget; // See TARGET
+    private int mNumUsers;
 
     private Toolbar mToolbar;
     private TextView tv_numMembers;
@@ -41,12 +42,27 @@ public class ShowUserListActivity extends AppCompatActivity {
         // Parse intent
         Intent intent = getIntent();
         refPath = intent.getStringExtra(REF_PATH);
-        int numUsers = intent.getIntExtra(NUM_USERS, 1);
+        mNumUsers = intent.getIntExtra(NUM_USERS, 1);
         mTarget = intent.getStringExtra(TARGET);
         assert (mTarget != null);
 
+        tv_numMembers = (TextView) findViewById(R.id.ul_tv_numberUsers);
         // Add toolbar to activity
         mToolbar = (Toolbar) findViewById(R.id.toolbar_userlist);
+        switch (mTarget) {
+            case TARGET_CREATECONVO:
+                mToolbar.setTitle("Create Conversation");
+                tv_numMembers.setText("Number of friends: " + Integer.toString(mNumUsers));
+                break;
+            case TARGET_CRMEMBERS:
+                mToolbar.setTitle("Chat Members");
+                tv_numMembers.setText("Number of members: " + Integer.toString(mNumUsers));
+                break;
+            case TARGET_FRIENDLIST:
+                mToolbar.setTitle("Friends");
+                tv_numMembers.setText("Number of friends: " + Integer.toString(mNumUsers));
+                break;
+        }
         this.setSupportActionBar(mToolbar);
 
         // Store users into a recycler view and configure it
@@ -73,21 +89,6 @@ public class ShowUserListActivity extends AppCompatActivity {
                 mTarget);
 
         rv.setAdapter(adapter);
-        tv_numMembers = (TextView) findViewById(R.id.ul_tv_numberUsers);
-
-        switch (mTarget) {
-            case TARGET_CREATECONVO:
-                mToolbar.setTitle("Create Conversation");
-                tv_numMembers.setText("Number of friends: " + Integer.toString(numUsers));
-                break;
-            case TARGET_CRMEMBERS:
-                mToolbar.setTitle("Chat Members");
-                tv_numMembers.setText("Number of members: " + Integer.toString(numUsers));
-                break;
-            case TARGET_FRIENDLIST:
-                mToolbar.setTitle("Friends");
-                tv_numMembers.setText("Number of friends: " + Integer.toString(numUsers));
-                break;
-        }
     }
+
 }

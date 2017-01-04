@@ -98,7 +98,10 @@ public class ChatActivity extends AppCompatActivity {
                 @Override
                 public void onDataChange(DataSnapshot dataSnapshot) {
                     mFriend = dataSnapshot.getValue(User.class);
-                    mToolbar.setTitle("Chat: " + mFriend.name);
+                    if (mFriend != null)
+                        mToolbar.setTitle("Chat: " + mFriend.name);
+                    else // Should never happen though
+                        mToolbar.setTitle("Chat");
                 }
 
                 @Override

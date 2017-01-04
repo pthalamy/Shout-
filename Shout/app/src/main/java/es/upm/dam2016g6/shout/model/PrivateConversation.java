@@ -1,9 +1,13 @@
 package es.upm.dam2016g6.shout.model;
 
+import com.google.firebase.database.Exclude;
 import com.google.firebase.database.IgnoreExtraProperties;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Set;
+
+import es.upm.dam2016g6.shout.support.Utils;
 
 /**
  * Created by pthalamy on 4/1/17.
@@ -30,5 +34,19 @@ public class PrivateConversation {
         this.lastTextTime = 0;
         users.put(userId1, true);
         users.put(userId2, true);
+    }
+
+    @Exclude
+    public String getContactUid() {
+        // Contact is member of conversation that is not activeUser
+        Set<String> members = this.users.keySet();
+        String cUserId = Utils.getCurrentUserUid();
+
+        for (String uid : members) {
+            if (!uid.equals(cUserId))
+                return uid;
+        }
+
+        return null;
     }
 }

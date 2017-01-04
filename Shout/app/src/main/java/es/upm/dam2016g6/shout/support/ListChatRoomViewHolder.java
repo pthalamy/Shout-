@@ -14,6 +14,7 @@ import es.upm.dam2016g6.shout.R;
  */
 
 public class ListChatRoomViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener  {
+
     Context context;
 
     TextView tv_title;
