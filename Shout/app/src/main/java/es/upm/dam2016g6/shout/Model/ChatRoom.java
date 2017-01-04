@@ -43,7 +43,7 @@ public class ChatRoom {
     public Map<String, Boolean> userUids = new HashMap<>();
 
     public ChatRoom() {
-        // Default constructor required for calls to DataSnapshot.getValue(User.class)
+        // Default constructor required for calls to DataSnapshot.getValue(Chatroom.class)
     }
 
     public ChatRoom(String uid, String title, String category, String imageUrl,
@@ -168,7 +168,6 @@ public class ChatRoom {
     }
 
     public static void leaveChatroom(ChatRoom chatroom) {
-        // Retrieve previously stored tag
         DatabaseReference ref = Utils.getDatabase().getReference();
         String userUid = Utils.getCurrentUserUid();
         ref.child("/users/" + userUid + "/userChatroomsUids/" + chatroom.uid).removeValue();

@@ -20,12 +20,15 @@ import com.google.firebase.database.FirebaseDatabase;
 
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.Map;
+import java.util.Objects;
 
 /**
  * Created by pthalamy on 5/12/16.
  */
 
 public class Utils {
+    private static final String TAG = "TAG_" + Utils.class.getSimpleName();
     public static final int MY_PERMISSIONS_ACCESS_LOCATION = 0x123;
     private static FirebaseDatabase mDatabase;
 
@@ -67,6 +70,31 @@ public class Utils {
     public static void setCurrentLocation(GeoLocation newLocation) {
         currentLocation = newLocation;
     }
+
+//    private static User currentUser = null;
+//    public static User getCurrentUser() {
+//        if (currentUser == null) {
+//            assert (getCurrentUserUid() != null);
+//            DatabaseReference userRef = getDatabase().getReference("/users/" + getCurrentUserUid());
+//            userRef.addValueEventListener(new ValueEventListener() {
+//                @Override
+//                public void onDataChange(DataSnapshot dataSnapshot) {
+//                    currentUser = dataSnapshot.getValue(User.class);
+//                }
+//
+//                @Override
+//                public void onCancelled(DatabaseError databaseError) {
+//                    Log.w(TAG, "getCurrentUser: error fetching current user");
+//                }
+//            });
+//
+//        }
+//
+//
+//        return currentUser;
+//    }
+
+
 
     private static String currentUserUid = null;
     public static String getCurrentUserUid() {
@@ -124,5 +152,14 @@ public class Utils {
         parameters.putString("fields", "likes");
         request.setParameters(parameters);
         request.executeAsync();
+    }
+
+    public static <T, E> T getKeyByValue(Map<T, E> map, E value) {
+        for (Map.Entry<T, E> entry : map.entrySet()) {
+            if (Objects.equals(value, entry.getValue())) {
+                return entry.getKey();
+            }
+        }
+        return null;
     }
 }

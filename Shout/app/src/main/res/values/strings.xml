@@ -39,7 +39,9 @@
     <string name="common_fb_likes_label">Likes in common:</string>
     <string name="profile_name">Profile Name</string>
     <string name="leaveChatroom_cancel_dialog_title">Leave Chatroom</string>
-    <string name="leaveChatroom_cancel_dialog_message">Are you sure ?\n The chatroom can be joined again later as soon as it has not expired and is in range.</string>
+    <string name="leaveChatroom_cancel_dialog_message">Are you sure?\n The chatroom can be joined again later as soon as it has not expired and is in range.</string>
+    <string name="deletePM_dialog_message">Are you sure?\nThe conversation will also be deleted for the other user, and it cannot be undone.</string>
+    <string name="deletePM_dialog_title">Delete Conversation ?</string>
 
     <string-array name="categories_array">
         <item></item>

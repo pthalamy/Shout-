@@ -22,13 +22,16 @@ import es.upm.dam2016g6.shout.support.Utils;
 
 @IgnoreExtraProperties
 public class User {
-    private static final String TAG = "TAG_User";
+    private static final String TAG = "TAG_" + User.class.getSimpleName();
     private static User currentUser = null;
 
     public String uid;
     public String name;
     public String facebookId;
     public Map<String, Boolean> userChatroomsUids = new HashMap<>();
+    public Map<String, Boolean> friends = new HashMap<>(); // index to friends as uids
+    // index to private conversations as follows: <chatUid, contactUid>
+    public Map<String, String> privateChats = new HashMap<>();
 
     public User() {
         // Default constructor required for calls to DataSnapshot.getValue(User.class)
@@ -75,12 +78,45 @@ public class User {
         return currentUser;
     }
 
-    public Map<String, Boolean> getUserChatroomsUids() {
-        return userChatroomsUids;
+    @Exclude
+    public boolean isCurrentUser() {
+        return this.uid.equals(Utils.getCurrentUserUid());
     }
 
     @Exclude
-    public boolean isCurrentUser() {
-        return this.uid == Utils.getCurrentUserUid();
+    public void addFriend(String friendUid) {
+        DatabaseReference ref = Utils.getDatabase().getReference();
+        ref.child("/users/" + this.uid + "/friends/" + friendUid).setValue(true);
+    }
+
+    @Exclude
+    public void removeFriend(String friendUid) {
+        DatabaseReference ref = Utils.getDatabase().getReference();
+        ref.child("/users/" + this.uid + "/friends/" + friendUid).removeValue();
+    }
+
+    @Exclude
+    public String createConversationWithUser(String userUid) {
+        DatabaseReference ref = Utils.getDatabase().getReference();
+        String conversationKey = ref.child("/privateConversations/").push().getKey();
+        PrivateConversation pc = new PrivateConversation(conversationKey, this.uid, userUid);
+
+        ref.child("/privateConversations/" + conversationKey).setValue(pc);
+
+        // Create chat for both users
+        ref.child("/users/" + this.uid + "/privateChats/" + conversationKey).setValue(userUid);
+        ref.child("/users/" + userUid + "/privateChats/" + conversationKey).setValue(this.uid);
+
+        return conversationKey; // Return the chat's key to access it easily in caller
+    }
+
+    @Exclude
+    public void deleteConversationWithUser(String convUid, String userUid) {
+        DatabaseReference ref = Utils.getDatabase().getReference();
+        // Delete chat for both user, for the lulz
+        ref.child("/users/" + this.uid + "/privateChats/" + convUid).removeValue();
+        ref.child("/users/" + userUid + "/privateChats/" + convUid).removeValue();
+        ref.child("/privateConversations/" + convUid).removeValue();
+        ref.child("/messages/" + convUid).removeValue();
     }
 }

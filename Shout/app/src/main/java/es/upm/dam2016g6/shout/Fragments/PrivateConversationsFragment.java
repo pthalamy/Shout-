@@ -41,10 +41,13 @@ public class PrivateConversationsFragment extends android.support.v4.app.Fragmen
         // Inflate the layout for this fragment
         mView = inflater.inflate(R.layout.fragment_private_conversations, container, false);
 
-         // Add toolbar to fragment (contains logout button)
+         // Add toolbar to fragment
         Toolbar toolbar = (Toolbar) mView.findViewById(R.id.toolbar_private_conversations);
         toolbar.setTitle("Private Conversations");
         ((AppCompatActivity)getActivity()).setSupportActionBar(toolbar);
+
+
+
 
         return mView;
     }

@@ -81,6 +81,10 @@ public class MainActivity extends AppCompatActivity
     public GeoLocation mCurrentGeoLocation;
     private String mLastUpdateTime;
 
+    private User mActiveUser;
+    private DatabaseReference mActiveUserRef;
+    private ValueEventListener mActiveUserVEL;
+
     private Fragment fragment;
     public HashMap<String, User> usersInRange = new HashMap<>();
     public HashMap<String, ChatRoom> chatroomsInRange = new HashMap<>();
@@ -107,6 +111,21 @@ public class MainActivity extends AppCompatActivity
                     .addApi(LocationServices.API)
                     .build();
         }
+
+        // Fetch current User
+        mActiveUserRef = Utils.getDatabase().getReference("/users/" + Utils.getCurrentUserUid());
+        mActiveUserVEL = new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                mActiveUser = dataSnapshot.getValue(User.class);
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+                Log.w(TAG, "onCreate: active user's data could not be fetched from Firebase");
+            }
+        };
+        mActiveUserRef.addValueEventListener(mActiveUserVEL);
 
         geoFireUsers = new GeoFire(Utils.getDatabase().getReference("userLocations"));
         geoFireChatrooms = new GeoFire(Utils.getDatabase().getReference("chatroomLocations"));
@@ -271,6 +290,8 @@ public class MainActivity extends AppCompatActivity
             this.getMenuInflater().inflate(R.menu.my_profile_menu, menu);
         else if (fragment instanceof ChatRoomsFragment)
             this.getMenuInflater().inflate(R.menu.chat_rooms_menu, menu);
+        else if (fragment instanceof PrivateConversationsFragment)
+            this.getMenuInflater().inflate(R.menu.pm_menu, menu);
 
         return true;
     }
@@ -289,6 +310,7 @@ public class MainActivity extends AppCompatActivity
                                 Log.d(TAG, "User signed out");
                                 Utils.resetCurrentUserUid();
                                 startActivity(new Intent(MainActivity.this, LoginActivity.class));
+                                mActiveUserRef.removeEventListener(mActiveUserVEL); // Safely disable listener before destroying activity
                                 finish();
                             }
                         });
@@ -297,6 +319,31 @@ public class MainActivity extends AppCompatActivity
             case R.id.action_new_chat_rooms:
                 startActivity(new Intent(this, ChatRoomCreationActivity.class));
                 return true;
+
+            case R.id.action_new_friend_conv:
+                Intent intentNFC = new Intent(this, ShowUserListActivity.class);
+                String keyRefNFC = "/users/" + Utils.getCurrentUserUid() + "/friends/";
+                intentNFC.putExtra(ShowUserListActivity.REF_PATH, keyRefNFC);
+                intentNFC.putExtra(ShowUserListActivity.TARGET, ShowUserListActivity.TARGET_CREATECONVO);
+                if (mActiveUser != null)
+                    intentNFC.putExtra(ShowUserListActivity.NUM_USERS, mActiveUser.friends.size());
+
+                this.startActivity(intentNFC);
+
+                return true;
+
+            case R.id.action_showFriendList:
+                Intent intentSF = new Intent(this, ShowUserListActivity.class);
+                String keyRefSF = "/users/" + Utils.getCurrentUserUid() + "/friends/";
+                intentSF.putExtra(ShowUserListActivity.REF_PATH, keyRefSF);
+                intentSF.putExtra(ShowUserListActivity.TARGET, ShowUserListActivity.TARGET_FRIENDLIST);
+                if (mActiveUser != null)
+                    intentSF.putExtra(ShowUserListActivity.NUM_USERS, mActiveUser.friends.size());
+
+                this.startActivity(intentSF);
+
+                return true;
+
 
             default:
                 // If we got here, the user's action was not recognized.
@@ -344,6 +391,7 @@ public class MainActivity extends AppCompatActivity
                         } catch (IntentSender.SendIntentException e) {
                             // Ignore the error.
                         }
+
                         break;
                     case LocationSettingsStatusCodes.SETTINGS_CHANGE_UNAVAILABLE:
                         // Location settings are not satisfied. However, we have no way
@@ -463,4 +511,5 @@ public class MainActivity extends AppCompatActivity
         GeoFire geoFire = new GeoFire(ref);
         geoFire.removeLocation(uid);
     }
+
 }

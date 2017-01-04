@@ -7,6 +7,8 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
+import android.view.View;
+import android.widget.Button;
 import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
@@ -46,6 +48,13 @@ public class ProfileActivity extends AppCompatActivity {
     private DatabaseReference mUserRef;
     private String userUid;
     private User user;
+    private User mCurrentUser;
+
+    private CircleImageView civ_profilePic;
+    private TextView tv_userName;
+    private RecyclerView rv_commonLikes;
+    private Button bt_addFriend;
+    private Button bt_sendMessage;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -74,6 +83,13 @@ public class ProfileActivity extends AppCompatActivity {
         toolbar.setTitle("Profile");
         this.setSupportActionBar(toolbar);
 
+        // Set up components
+        civ_profilePic = (CircleImageView) findViewById(R.id.profile_civ_profilePic);
+        tv_userName = ((TextView) findViewById(R.id.profile_tv_name));
+        rv_commonLikes = (RecyclerView) this.findViewById(R.id.profile_rv_commonLikes);
+        bt_addFriend = (Button) this.findViewById(R.id.profile_bt_friendList);
+        bt_sendMessage = (Button) this.findViewById(R.id.profile_bt_sendMessage);
+
         mUserRef = Utils.getDatabase().getReference("");
     }
 
@@ -84,16 +100,15 @@ public class ProfileActivity extends AppCompatActivity {
         // Load profile picture from Firebase
         Glide.with(this)
                 .load(profileImgUrl)
-                .into((CircleImageView) findViewById(R.id.profile_civ_profilePic));
+                .into(civ_profilePic);
 
-        ((TextView) findViewById(R.id.profile_tv_name)).setText(user.name);
+        tv_userName.setText(user.name);
         // Store likes into a recycler view and configure it
-        RecyclerView rv = (RecyclerView) this.findViewById(R.id.profile_rv_commonLikes);
         LinearLayoutManager layoutManager = new LinearLayoutManager(this);
         layoutManager.setOrientation(LinearLayoutManager.HORIZONTAL);
         layoutManager.scrollToPosition(0);
-        rv.setLayoutManager(layoutManager);
-        rv.setHasFixedSize(true);
+        rv_commonLikes.setLayoutManager(layoutManager);
+        rv_commonLikes.setHasFixedSize(true);
 
         // Fetch likes for both current user and profile being visited, and
         //  whichever request finishes first initiates likes comparison
@@ -144,6 +159,77 @@ public class ProfileActivity extends AppCompatActivity {
             }
         };
         Utils.getFacebookLikesForID(user.facebookId, otherCallback);
+
+        // Configure action buttons and set up callbacks
+        if (user.isCurrentUser()) { // Disable buttons and no need to set any callback
+            bt_addFriend.setAlpha(0.5f);
+            bt_addFriend.setEnabled(false);
+            bt_sendMessage.setAlpha(0.5f);
+            bt_sendMessage.setEnabled(false);
+        } else {
+            // Set callbacks asynchronously,
+            //  since we need to fetch the information of the current user first
+            final DatabaseReference mCurrentUserRef= Utils.getDatabase().getReference("/users/" + Utils.getCurrentUserUid());
+            mCurrentUserRef.addListenerForSingleValueEvent(new ValueEventListener() {
+                @Override
+                public void onDataChange(DataSnapshot dataSnapshot) {
+                    mCurrentUser = dataSnapshot.getValue(User.class);
+                    if (mCurrentUser.friends.containsKey(user.uid)) { // Current user already has other user in friendlist
+                        bt_addFriend.setText("REMOVE FRIEND");
+                        bt_addFriend.setOnClickListener(new View.OnClickListener() {
+                            @Override
+                            public void onClick(View view) {
+                                mCurrentUser.removeFriend(user.uid);
+                                bt_addFriend.setText("ADD FRIEND");
+                            }
+                        });
+                    } else { // They are no friends yet
+                        bt_addFriend.setText("ADD FRIEND");
+                        bt_addFriend.setOnClickListener(new View.OnClickListener() {
+                            @Override
+                            public void onClick(View view) {
+                                mCurrentUser.addFriend(user.uid);
+                                bt_addFriend.setText("REMOVE FRIEND");
+                            }
+                        });
+                    }
+
+                    if (mCurrentUser.privateChats.containsValue(user.uid)) { // Chat between the two already exists
+                        bt_sendMessage.setOnClickListener(new View.OnClickListener() {
+                            @Override
+                            public void onClick(View view) {
+                                // Segue to conversation between the two
+                                String chatUid = Utils.getKeyByValue(mCurrentUser.privateChats, user.uid); // Costly, no other way?
+                                segueToChat(chatUid);
+                            }
+                        });
+                    } else { // Does not exist, create chat first and then segue to it
+                        bt_sendMessage.setOnClickListener(new View.OnClickListener() {
+                            @Override
+                            public void onClick(View view) {
+                                // Segue to conversation between the two
+                                String chatUid = mCurrentUser.createConversationWithUser(user.uid);
+                                segueToChat(chatUid);
+                            }
+                        });
+                    }
+                }
+
+                @Override
+                public void onCancelled(DatabaseError databaseError) {
+                    Log.w(TAG, "ProfileActivity: loadUserData: Could not retrieve current user information");
+                }
+            });
+        }
+
+    }
+
+    public void segueToChat(String chatUid) {
+        Intent intent = new Intent(this, ChatActivity.class);
+        intent.putExtra(ChatActivity.CHAT_UID, chatUid);
+        intent.putExtra(ChatActivity.CHAT_TARGET, ChatActivity.CHAT_TARGET_USER);
+        intent.putExtra(ChatActivity.CHAT_USER_UID, userUid);
+        this.startActivity(intent);
     }
 
     private void initiateLikesComparison() {
@@ -154,7 +240,6 @@ public class ProfileActivity extends AppCompatActivity {
         }
 
         MyLikesRecyclerViewAdapter adapter = new MyLikesRecyclerViewAdapter(fbCommonLikes);
-        RecyclerView rv = (RecyclerView) ProfileActivity.this.findViewById(R.id.profile_rv_commonLikes);
-        rv.setAdapter(adapter);
+        rv_commonLikes.setAdapter(adapter);
     }
 }
