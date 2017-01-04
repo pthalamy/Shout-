@@ -19,8 +19,9 @@ public class ChatRoomViewHolder extends RecyclerView.ViewHolder {
     TextView tv_title;
     TextView tv_created;
     TextView tv_expires;
-    TextView tv_description;
+    TextView tv_range;
     TextView tv_category;
+    TextView tv_distance;
     Button bt_share;
     Button bt_join;
     ImageView imageView;
@@ -31,9 +32,10 @@ public class ChatRoomViewHolder extends RecyclerView.ViewHolder {
 
         context = itemView.getContext();
         tv_title = (TextView) itemView.findViewById(R.id.cicl_tv_title);
+        tv_distance = (TextView) itemView.findViewById(R.id.cicl_tv_dist);
         tv_created = (TextView) itemView.findViewById(R.id.cicl_tv_created);
         tv_expires = (TextView) itemView.findViewById(R.id.cicl_tv_expires);
-//        tv_description = (TextView) itemView.findViewById(R.id.cicl_tv_description);
+        tv_range = (TextView) itemView.findViewById(R.id.cicl_tv_range);
         tv_category = (TextView) itemView.findViewById(R.id.cicl_tv_category);
         bt_join = (Button) itemView.findViewById(R.id.cicl_bt_join);
         bt_share = (Button) itemView.findViewById(R.id.cicl_bt_share);

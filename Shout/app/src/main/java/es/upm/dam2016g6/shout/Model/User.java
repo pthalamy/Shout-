@@ -28,7 +28,8 @@ public class User {
     public String uid;
     public String name;
     public String facebookId;
-    public Map<String, Boolean> userChatroomsUids = new HashMap<>();
+    public ShoutLocation location;
+    public Map<String, Boolean> chatrooms = new HashMap<>();
     public Map<String, Boolean> friends = new HashMap<>(); // index to friends as uids
     // index to private conversations as follows: <chatUid, contactUid>
     public Map<String, String> privateChats = new HashMap<>();

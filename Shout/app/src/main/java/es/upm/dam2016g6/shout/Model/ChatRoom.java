@@ -40,14 +40,15 @@ public class ChatRoom {
     public String lastTextAuthor;
     public long lastTextTime;
     public int range;
-    public Map<String, Boolean> userUids = new HashMap<>();
+    public ShoutLocation location;
+    public Map<String, Boolean> members = new HashMap<>();
 
     public ChatRoom() {
         // Default constructor required for calls to DataSnapshot.getValue(Chatroom.class)
     }
 
     public ChatRoom(String uid, String title, String category, String imageUrl,
-                    int range, int ttl, String creatorUid) {
+                    int range, int ttl, String creatorUid, ShoutLocation location) {
         this.uid = uid;
         this.title = title;
         this.category = category;
@@ -61,7 +62,8 @@ public class ChatRoom {
         this.lastText = "No messages yet.";
         this.lastTextAuthor = "";
         this.lastTextTime = 0;
-        userUids.put(creatorUid, true);
+        this.location = location;
+        members.put(creatorUid, true);
     }
 
     @Exclude
@@ -69,7 +71,7 @@ public class ChatRoom {
                                             int range, int ttl, String creatorUid, GeoLocation location) {
         String key = getChatroomsReferenceInstance().push().getKey();
         ChatRoom chatroom = new ChatRoom(key, title, category, imageUrl,
-                range, ttl, creatorUid);
+                range, ttl, creatorUid, new ShoutLocation(location.latitude, location.longitude));
 
         Log.d(TAG, "User " + creatorUid + " created new chatroom: " + key);
         DatabaseReference mRef = Utils.getDatabase().getReference();
@@ -77,7 +79,7 @@ public class ChatRoom {
         Map<String, Object> childUpdates = new HashMap<>();
         childUpdates.put("/chatrooms/" + key, chatroom);
         mRef.updateChildren(childUpdates);
-        mRef.child("/users/" + creatorUid + "/userChatroomsUids/" + key).setValue(true);
+        mRef.child("/users/" + creatorUid + "/chatrooms/" + key).setValue(true);
 
         // Set General Location as well
         GeoFire geoFireChatrooms = new GeoFire(Utils.getDatabase().getReference("chatroomLocations"));
@@ -162,17 +164,17 @@ public class ChatRoom {
     public static void joinChatroom(ChatRoom chatroom) {
         DatabaseReference ref = Utils.getDatabase().getReference();
         String userUid = Utils.getCurrentUserUid();
-        ref.child("/users/" + userUid + "/userChatroomsUids/" + chatroom.uid).setValue(true);
-        ref.child("/chatrooms/" + chatroom.uid + "/userUids/" + userUid).setValue(true);
-        chatroom.userUids.put(userUid, true);
+        ref.child("/users/" + userUid + "/chatrooms/" + chatroom.uid).setValue(true);
+        ref.child("/chatrooms/" + chatroom.uid + "/members/" + userUid).setValue(true);
+        chatroom.members.put(userUid, true);
     }
 
     public static void leaveChatroom(ChatRoom chatroom) {
         DatabaseReference ref = Utils.getDatabase().getReference();
         String userUid = Utils.getCurrentUserUid();
-        ref.child("/users/" + userUid + "/userChatroomsUids/" + chatroom.uid).removeValue();
-        ref.child("/chatrooms/" + chatroom.uid + "/userUids/" + userUid).removeValue();
-        chatroom.userUids.remove(userUid);
+        ref.child("/users/" + userUid + "/chatrooms/" + chatroom.uid).removeValue();
+        ref.child("/chatrooms/" + chatroom.uid + "/members/" + userUid).removeValue();
+        chatroom.members.remove(userUid);
     }
 
 }

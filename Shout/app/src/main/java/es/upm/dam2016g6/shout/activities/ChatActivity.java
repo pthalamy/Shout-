@@ -242,9 +242,9 @@ public class ChatActivity extends AppCompatActivity {
                 return true;
             case R.id.action_showMembers:
                 Intent intentSM = new Intent(this, ShowUserListActivity.class);
-                String keyRef = "/chatrooms/" + mChatroom.uid + "/userUids/";
+                String keyRef = "/chatrooms/" + mChatroom.uid + "/members/";
                 intentSM.putExtra(ShowUserListActivity.REF_PATH, keyRef);
-                intentSM.putExtra(ShowUserListActivity.NUM_USERS, mChatroom.userUids.size());
+                intentSM.putExtra(ShowUserListActivity.NUM_USERS, mChatroom.members.size());
                 intentSM.putExtra(ShowUserListActivity.TARGET, ShowUserListActivity.TARGET_CRMEMBERS);
                 this.startActivity(intentSM);
 

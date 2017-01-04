@@ -61,6 +61,8 @@ public class ChatRoomsIndexRecyclerViewAdapter extends FirebaseIndexRecyclerAdap
     protected void populateViewHolder(ListChatRoomViewHolder viewHolder, ChatRoom chatroom, int position) {
         viewHolder.tv_title.setText(chatroom.title);
         viewHolder.tv_category.setText(chatroom.category);
+        String dist = Utils.getUserDistanceToLatLng(chatroom.location.latitude, chatroom.location.longitude);
+        viewHolder.tv_dist_range.setText(dist + " / " + Utils.distanceInMetersToString(chatroom.range));
 
         // Get number of hours from creation and until expiration
         Date now = new Date();

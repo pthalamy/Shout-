@@ -15,19 +15,42 @@
 
     <TextView
         android:id="@+id/cicl_tv_title"
-        android:layout_width="match_parent"
+        android:layout_width="wrap_content"
         android:layout_height="20dp"
         android:text="Title"
         android:textColor="@color/colorPrimary"
         android:textStyle="normal|bold" />
 
     <TextView
+        android:id="@+id/cicl_tv_dist"
+        android:layout_width="wrap_content"
+        android:layout_height="20dp"
+        android:layout_alignParentEnd="true"
+        android:layout_alignParentTop="true"
+        android:text="100m"
+        android:textColor="@color/colorPrimaryDark"
+        android:textStyle="normal|bold"
+        />
+
+    <TextView
         android:id="@+id/cicl_tv_category"
-        android:layout_width="match_parent"
+        android:layout_width="wrap_content"
         android:layout_height="12dp"
         android:layout_below="@+id/cicl_tv_title"
         android:textColor="@color/darkGray"
         android:text="Category"
+        android:textSize="10sp" />
+
+    <TextView
+        android:id="@+id/cicl_tv_range"
+        android:layout_width="wrap_content"
+        android:layout_height="12dp"
+        android:layout_below="@+id/cicl_tv_title"
+        android:layout_alignBaseline="@id/cicl_tv_category"
+        android:layout_alignParentEnd="true"
+        android:textColor="@color/darkGray"
+        android:textStyle="italic"
+        android:text="Range: 100m"
         android:textSize="10sp" />
     
     <TextView
@@ -40,7 +63,7 @@
         android:textSize="10sp"
         android:textStyle="normal|italic" />
     
-   <TextView
+    <TextView
         android:id="@+id/cicl_tv_expires"
         android:layout_width="wrap_content"
         android:layout_height="12dp"

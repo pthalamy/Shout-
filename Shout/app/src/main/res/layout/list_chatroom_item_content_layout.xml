@@ -15,11 +15,22 @@
         android:id="@+id/lcic_tv_title"
         android:layout_width="200dp"
         android:layout_height="20dp"
-        android:layout_toRightOf="@+id/lcic_iv_thumbnail"
+        android:layout_toEndOf="@+id/lcic_iv_thumbnail"
         android:layout_marginBottom="3dp"
         android:text="Title"
         android:textColor="@color/colorPrimary"
         android:textStyle="normal|bold" />
+
+    <TextView
+        android:id="@+id/lcic_tv_dist_range"
+        android:layout_width="wrap_content"
+        android:layout_height="20dp"
+        android:layout_alignParentEnd="true"
+        android:layout_alignBaseline="@id/lcic_tv_title"
+        android:layout_marginBottom="3dp"
+        android:text="100m / 500m"
+        android:textColor="@color/colorPrimary"
+        android:textStyle="normal|bold|italic" />
 
     <TextView
         android:id="@+id/lcic_tv_category"

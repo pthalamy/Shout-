@@ -49,7 +49,7 @@ public class MyChatRoomsFragment extends Fragment {
 
         DatabaseReference keyRef = FirebaseDatabase
                 .getInstance()
-                .getReference("/users/" + Utils.getCurrentUserUid() + "/userChatroomsUids/");
+                .getReference("/users/" + Utils.getCurrentUserUid() + "/chatrooms/");
         DatabaseReference dataRef = FirebaseDatabase
                 .getInstance()
                 .getReference("/chatrooms/");

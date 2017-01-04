@@ -24,6 +24,7 @@ public class ListChatRoomViewHolder extends RecyclerView.ViewHolder implements V
     TextView tv_latestText;
     TextView tv_latestTextTime;
     TextView tv_latestTextAuthor;
+    TextView tv_dist_range;
     CircleImageView iv_thumbnail;
     ImageButton ib_star;
     MyViewHolderClickListener mListener;
@@ -42,6 +43,7 @@ public class ListChatRoomViewHolder extends RecyclerView.ViewHolder implements V
         tv_latestTextAuthor = (TextView) itemView.findViewById(R.id.lcic_tv_lastAuthor);
         tv_latestTextTime = (TextView) itemView.findViewById(R.id.lcic_tv_lastTextTime);
         ib_star = (ImageButton) itemView.findViewById(R.id.lcic_ib_star);
+        tv_dist_range = (TextView) itemView.findViewById(R.id.lcic_tv_dist_range);
 
         mListener = listener;
 

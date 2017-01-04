@@ -32,7 +32,6 @@ import com.google.android.gms.location.LocationSettingsRequest;
 import com.google.android.gms.location.LocationSettingsResult;
 import com.google.android.gms.location.LocationSettingsStates;
 import com.google.android.gms.location.LocationSettingsStatusCodes;
-import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
@@ -55,6 +54,7 @@ import es.upm.dam2016g6.shout.fragments.DiscoveryFragment;
 import es.upm.dam2016g6.shout.fragments.MyProfileFragment;
 import es.upm.dam2016g6.shout.fragments.PrivateConversationsFragment;
 import es.upm.dam2016g6.shout.model.ChatRoom;
+import es.upm.dam2016g6.shout.model.ShoutLocation;
 import es.upm.dam2016g6.shout.model.User;
 import es.upm.dam2016g6.shout.support.Utils;
 
@@ -498,8 +498,8 @@ public class MainActivity extends AppCompatActivity
         // Update location in user as well
         DatabaseReference ref = Utils.getDatabase().getReference();
         String userUid = Utils.getCurrentUserUid();
-        ref.child("/users/" + userUid + "/location/")
-                .setValue(new LatLng(mCurrentGeoLocation.latitude, mCurrentGeoLocation.longitude));
+        ref.child("/users/" + userUid + "location")
+                .setValue(new ShoutLocation(mCurrentGeoLocation.latitude, mCurrentGeoLocation.longitude));
 
         // Update GeoQueries
         mGeoQueryUsers.setCenter(mCurrentGeoLocation);

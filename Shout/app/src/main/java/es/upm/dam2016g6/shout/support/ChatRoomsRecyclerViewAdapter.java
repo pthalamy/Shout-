@@ -36,6 +36,10 @@ public class ChatRoomsRecyclerViewAdapter extends FirebaseRecyclerAdapter<ChatRo
         // Set title and categories
         viewHolder.tv_title.setText(chatroom.title);
         viewHolder.tv_category.setText(chatroom.category);
+        viewHolder.tv_distance.setText(Utils.getUserDistanceToLatLng(
+                chatroom.location.latitude,
+                chatroom.location.longitude));
+        viewHolder.tv_range.setText(Utils.distanceInMetersToString(chatroom.range));
 
         // Get number of hours from creation and until expiration
         Date now = new Date();
@@ -64,7 +68,7 @@ public class ChatRoomsRecyclerViewAdapter extends FirebaseRecyclerAdapter<ChatRo
 
         viewHolder.bt_join.setTag(chatroom);
         String userUid = Utils.getCurrentUserUid();
-        if (!chatroom.userUids.containsKey(userUid)) {
+        if (!chatroom.members.containsKey(userUid)) {
             setButtonJoin(viewHolder.bt_join);
         } else { // User already in chatroom, cannot join again
             setButtonLeave(viewHolder.bt_join);

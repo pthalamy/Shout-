@@ -71,6 +71,13 @@ public class Utils {
         currentLocation = newLocation;
     }
 
+    public static Location geoLocationToLocation(GeoLocation geoLoc) {
+        Location loc = new Location("");
+        loc.setLatitude(geoLoc.latitude);
+        loc.setLongitude(geoLoc.longitude);
+        return loc;
+    }
+
 //    private static User currentUser = null;
 //    public static User getCurrentUser() {
 //        if (currentUser == null) {
@@ -127,10 +134,14 @@ public class Utils {
 
         float distanceInMeters = loc1.distanceTo(loc2);
 
-        if (distanceInMeters < 1000)
-            return (long)distanceInMeters + "m";
+        return distanceInMetersToString(distanceInMeters);
+    }
+
+    public static String distanceInMetersToString(float dist) {
+        if (dist < 1000)
+            return (long)dist + "m";
         else
-            return (long)(distanceInMeters / 1000) + "km";
+            return (long)(dist / 1000) + "km";
     }
 
     public static String getFacebookProfilePictureFromID(String fbid) {
