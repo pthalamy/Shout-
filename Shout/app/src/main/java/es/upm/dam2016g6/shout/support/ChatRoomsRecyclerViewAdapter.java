@@ -1,13 +1,10 @@
 package es.upm.dam2016g6.shout.support;
 
-import android.util.TypedValue;
 import android.view.View;
 import android.widget.Button;
 
 import com.bumptech.glide.Glide;
 import com.firebase.ui.database.FirebaseRecyclerAdapter;
-import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.Query;
 
 import java.util.Date;
@@ -42,10 +39,18 @@ public class ChatRoomsRecyclerViewAdapter extends FirebaseRecyclerAdapter<ChatRo
 
         // Get number of hours from creation and until expiration
         Date now = new Date();
-        long numHoursSinceCreation = (now.getTime() - chatroom.creationDate.getTime()) / (1000 * 3600);
-        long numHoursToExpiration = (chatroom.expirationDate.getTime() - now.getTime()) / (1000 * 3600);
-        viewHolder.tv_created.setText("Created " + numHoursSinceCreation + "h ago");
-        viewHolder.tv_expires.setText("Expires in " + numHoursToExpiration + "h");
+        long numHoursSinceCreation = (now.getTime() - chatroom.creationDate) / (1000 * 3600);
+        long numHoursToExpiration = (chatroom.expirationDate- now.getTime()) / (1000 * 3600);
+
+        if (numHoursSinceCreation < 72)
+            viewHolder.tv_created.setText("Created " + numHoursSinceCreation + "h ago");
+        else
+            viewHolder.tv_created.setText("Created " + numHoursSinceCreation / 24 + "d ago");
+
+        if (numHoursToExpiration < 72)
+            viewHolder.tv_expires.setText("Expires in " + numHoursToExpiration + "h");
+        else
+            viewHolder.tv_expires.setText("Expires in " + numHoursToExpiration / 24 + "d");
 
         // Glide image in
         Glide.with(viewHolder.context)
@@ -57,32 +62,41 @@ public class ChatRoomsRecyclerViewAdapter extends FirebaseRecyclerAdapter<ChatRo
         viewHolder.bt_share.setEnabled(false);
         viewHolder.bt_share.setAlpha(0.5f);
 
-        String userUid = FirebaseAuth.getInstance().getCurrentUser().getUid();
-        if (!chatroom.usersUids.containsKey(userUid)) {
-            viewHolder.bt_join.setTag(chatroom);
-            viewHolder.bt_join.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View view) {
-                    Button bt = (Button)view;
-                    // Retrieve previously stored tag
-                    ChatRoom chatroom = (ChatRoom) view.getTag();
-                    DatabaseReference ref = Utils.getDatabase().getReference();
-                    String userUid = FirebaseAuth.getInstance().getCurrentUser().getUid();
-                    ref.child("/users/" + userUid + "/userChatroomsUids/" + chatroom.uid).setValue(true);
-                    ref.child("/chatrooms/" + chatroom.uid + "/userUids/" + userUid).setValue(true);
-                    bt.setEnabled(false);
-                    bt.setAlpha(0.5f);
-                    bt.setText("JOINED");
-                    bt.setTextSize(TypedValue.COMPLEX_UNIT_PX, bt.getTextSize() - 2);
-
-                }
-            });
+        viewHolder.bt_join.setTag(chatroom);
+        String userUid = Utils.getCurrentUserUid();
+        if (!chatroom.userUids.containsKey(userUid)) {
+            setButtonJoin(viewHolder.bt_join);
         } else { // User already in chatroom, cannot join again
-            viewHolder.bt_join.setEnabled(false);
-            viewHolder.bt_join.setAlpha(0.5f);
-            viewHolder.bt_join.setText("JOINED");
-            viewHolder.bt_join.setTextSize(TypedValue.COMPLEX_UNIT_PX, viewHolder.bt_join.getTextSize() - 2);
+            setButtonLeave(viewHolder.bt_join);
         }
-
     }
+
+    public static void setButtonJoin(Button bt) {
+        bt.setText("JOIN");
+        bt.setBackgroundColor(bt.getResources().getColor(R.color.colorPrimary));
+                bt.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Button bt = (Button)view;
+                ChatRoom chatroom = (ChatRoom) view.getTag();
+                ChatRoom.joinChatroom(chatroom);
+                setButtonLeave(bt);
+            }
+        });
+    }
+
+    public static void setButtonLeave(Button bt) {
+        bt.setText("LEAVE");
+        bt.setBackgroundColor(bt.getResources().getColor(R.color.colorCancelRed));
+        bt.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Button bt = (Button)view;
+                ChatRoom chatroom = (ChatRoom) view.getTag();
+                ChatRoom.leaveChatroom(chatroom);
+                setButtonJoin(bt);
+            }
+        });
+    }
+
 }

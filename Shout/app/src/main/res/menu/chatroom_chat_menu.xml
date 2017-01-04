@@ -2,13 +2,12 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto">
 
-    <!-- Settings, should always be in the overflow -->
-    <item android:id="@+id/action_showFriendList"
-        android:title="Show Friends"
+    <item android:id="@+id/action_showMembers"
+        android:title="Show Members"
         app:showAsAction="never"/>
 
-    <item android:id="@+id/action_logout"
-        android:title="@string/log_out"
+    <item android:id="@+id/action_leave"
+        android:title="Leave"
         app:showAsAction="never"/>
 
 </menu>

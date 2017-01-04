@@ -9,11 +9,12 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
+import com.bumptech.glide.load.engine.DiskCacheStrategy;
 
 import java.util.List;
 
-import es.upm.dam2016g6.shout.model.FacebookLike;
 import es.upm.dam2016g6.shout.R;
+import es.upm.dam2016g6.shout.model.FacebookLike;
 
 /**
  * Created by pthalamy on 22/11/16.
@@ -49,7 +50,7 @@ public class MyLikesRecyclerViewAdapter extends
 
     @Override
     public void onBindViewHolder(
-            MyLikesViewHolder viewHolder, int position) {
+            final MyLikesViewHolder viewHolder, final int position) {
         FacebookLike like= items.get(position);
         viewHolder.label.setText(like.getName());
 
@@ -57,6 +58,7 @@ public class MyLikesRecyclerViewAdapter extends
             Glide.with(context)
                     .load(like.getPictureUrl())
                     .placeholder(R.drawable.com_facebook_button_icon_blue)
+                    .diskCacheStrategy(DiskCacheStrategy.ALL)
                     .into(viewHolder.imageView);
         } else {
             // make sure Glide doesn't load anything into this view until told otherwise

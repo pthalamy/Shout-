@@ -78,13 +78,6 @@
         android:layout_marginStart="13dp"
         android:elevation="20dp" />
 
-    <SeekBar
-        android:layout_height="wrap_content"
-        android:id="@+id/sb_crc_range"
-        android:layout_alignTop="@+id/tv_crc_range"
-        android:layout_alignEnd="@+id/sp_crc_categories"
-        android:layout_width="200dp" />
-
     <Spinner
         android:id="@+id/sp_crc_categories"
         android:layout_height="50dp"
@@ -102,10 +95,11 @@
         android:layout_width="280dp"
         android:layout_alignBaseline="@+id/tv_crc_title"
         android:layout_alignBottom="@+id/tv_crc_title"
-        android:layout_toEndOf="@+id/tv_crc_ttl" />
+        android:layout_toEndOf="@+id/tv_crc_ttl"
+        android:hint="Topic" />
 
     <TextView
-        android:text="0m"
+        android:text="100m"
         android:layout_height="wrap_content"
         android:id="@+id/tv_crc_range_count"
         android:textStyle="normal|bold"
@@ -115,7 +109,7 @@
         android:textSize="16sp" />
 
     <TextView
-        android:text="0h"
+        android:text="1h"
         android:layout_width="50dp"
         android:layout_height="wrap_content"
         android:id="@+id/tv_crc_ttl_count"
@@ -162,6 +156,19 @@
         android:id="@+id/sb_crc_ttl"
         android:layout_width="200dp"
         android:layout_alignTop="@+id/tv_crc_ttl"
-        android:layout_toEndOf="@+id/tv_crc_range_count" />
+        android:layout_toEndOf="@+id/tv_crc_range_count"
+        style="@style/Widget.AppCompat.SeekBar.Discrete"
+        android:max="9"
+        android:progress="0" />
+
+    <SeekBar
+        android:layout_height="wrap_content"
+        android:id="@+id/sb_crc_range"
+        android:layout_width="200dp"
+        style="@style/Widget.AppCompat.SeekBar.Discrete"
+        android:max="9"
+        android:progress="0"
+        android:layout_alignTop="@+id/tv_crc_range"
+        android:layout_alignEnd="@+id/sp_crc_categories" />
 
 </RelativeLayout>

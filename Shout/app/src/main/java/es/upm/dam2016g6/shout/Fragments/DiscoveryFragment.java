@@ -12,6 +12,7 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import com.firebase.geofire.GeoLocation;
+import com.firebase.geofire.LocationCallback;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.MapView;
@@ -21,6 +22,7 @@ import com.google.android.gms.maps.model.CameraPosition;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
+import com.google.firebase.database.DatabaseError;
 
 import java.util.HashMap;
 
@@ -37,15 +39,17 @@ public class DiscoveryFragment extends android.support.v4.app.Fragment {
 
     MapView mMapView;
     private GoogleMap googleMap;
-    private HashMap<String, Marker> mUserMarkers; // Markers for users, indexed by key
-    private HashMap<String, Marker> mChatroomMarkers; // Markers for chatrooms, indexed by keya
+    private HashMap<String, Marker> mUserMarkers = new HashMap<>(); // Markers for users, indexed by key
+    private HashMap<String, Marker> mChatroomMarkers = new HashMap<>(); // Markers for chatrooms, indexed by keya
     private MainActivity mainActivity;
+    private HashMap<String, User> mUsers = new HashMap<>();
+    private HashMap<String, ChatRoom> mChatrooms = new HashMap<>();
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View rootView = inflater.inflate(R.layout.fragment_discovery, container, false);
 
-         // Add toolbar to fragment (contains logout button)
+        // Add toolbar to fragment (contains logout button)
         Toolbar toolbar = (Toolbar) rootView.findViewById(R.id.toolbar_discovery);
         toolbar.setTitle("Discovery");
         ((AppCompatActivity)getActivity()).setSupportActionBar(toolbar);
@@ -76,13 +80,6 @@ public class DiscoveryFragment extends android.support.v4.app.Fragment {
                     // TODO: Consider calling
                     DiscoveryFragment.this.getActivity()
                             .requestPermissions(new String[]{"android.permission.ACCESS_FINE_LOCATION"}, getTargetRequestCode());
-                    //    ActivityCompat#requestPermissions
-                    // here to request the missing permissions, and then overriding
-                    //   public void onRequestPermissionsResult(int requestCode, String[] permissions,
-                    //                                          int[] grantResults)
-                    // to handle the case where the user grants the permission. See the documentation
-                    // for ActivityCompat#requestPermissions for more details.
-                    return;
                 }
 
                 googleMap.setMyLocationEnabled(true);
@@ -98,7 +95,7 @@ public class DiscoveryFragment extends android.support.v4.app.Fragment {
 
                 // For zooming automatically to the location of the marker
                 CameraPosition cameraPosition = new CameraPosition.Builder()
-                        .target(new LatLng(mainActivity.mCurrentLocation.getLatitude(), mainActivity.mCurrentLocation.getLongitude()))
+                        .target(new LatLng(mainActivity.mCurrentGeoLocation.latitude, mainActivity.mCurrentGeoLocation.longitude))
                         .zoom((float) (mainActivity.discoveryRadius * 1.5))
                         .build();
                 googleMap.animateCamera(CameraUpdateFactory.newCameraPosition(cameraPosition));
@@ -137,26 +134,53 @@ public class DiscoveryFragment extends android.support.v4.app.Fragment {
     }
 
     public void drawUser(User user) {
-        Marker userMarker = googleMap.addMarker(new MarkerOptions()
-                .position(new LatLng(user.location.latitude, user.location.longitude))
-                .title(user.name)
-                .snippet(user.uid));
-        mUserMarkers.put(user.uid, userMarker);
+        mUsers.put(user.uid, user);
+        mainActivity.geoFireUsers.getLocation(user.uid, new LocationCallback() {
+            @Override
+            public void onLocationResult(String key, GeoLocation location) {
+                if (location != null) {
+                    User user = mUsers.get(key);
+                    Marker userMarker = googleMap.addMarker(new MarkerOptions()
+                            .position(new LatLng(location.latitude, location.longitude))
+                            .title(user.name)
+                            .snippet(user.uid));
+                    mUserMarkers.put(user.uid, userMarker);
+                }
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+            }
+        });
     }
 
-        public void drawChatroom(ChatRoom chatroom) {
-        Marker chatroomMarker= googleMap.addMarker(new MarkerOptions()
-                .position(new LatLng(chatroom.location.latitude, chatroom.location.longitude))
-                .title(chatroom.title)
-                .snippet(chatroom.uid));
-        chatroomMarker.setAlpha((float) 0.5);
-        mUserMarkers.put(chatroom.uid, chatroomMarker);
+    public void drawChatroom(final ChatRoom chatroom) {
+        mChatrooms.put(chatroom.uid, chatroom);
+        mainActivity.geoFireUsers.getLocation(chatroom.uid, new LocationCallback() {
+            @Override
+            public void onLocationResult(String key, GeoLocation location) {
+                if (location != null) {
+                    ChatRoom chatRoom = mChatrooms.get(key);
+                    Marker chatroomMarker= googleMap.addMarker(new MarkerOptions()
+                            .position(new LatLng(location.latitude, location.longitude))
+                            .title(chatroom.title)
+                            .snippet(chatroom.uid));
+                    chatroomMarker.setAlpha((float) 0.5);
+                    mUserMarkers.put(chatroom.uid, chatroomMarker);
+                }
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+            }
+        });
     }
 
     public void undrawUser(String userKey) {
         Marker marker = mUserMarkers.get(userKey);
         if (marker != null) {
             mUserMarkers.remove(userKey);
+            mUsers.remove(userKey);
             marker.remove();
         }
     }
@@ -165,6 +189,7 @@ public class DiscoveryFragment extends android.support.v4.app.Fragment {
         Marker marker = mChatroomMarkers.get(chatroomKey);
         if (marker != null) {
             mChatroomMarkers.remove(chatroomKey);
+            mChatrooms.remove(chatroomKey);
             marker.remove();
         }
     }

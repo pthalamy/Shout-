@@ -32,6 +32,7 @@ import com.google.android.gms.location.LocationSettingsRequest;
 import com.google.android.gms.location.LocationSettingsResult;
 import com.google.android.gms.location.LocationSettingsStates;
 import com.google.android.gms.location.LocationSettingsStatusCodes;
+import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
@@ -68,8 +69,10 @@ public class MainActivity extends AppCompatActivity
     private static final String LOCATION_KEY = "LK_MainActivity";
     private static final String LAST_UPDATED_TIME_STRING_KEY = "LUTSK_MainActivity";
     public static final String DISCOVERY_FRAGMENT = "DISCOVERY_FRAGMENT";
-    public static final String CHATROOMS_FRAGMENT_CREATION = "CHATROOMS_FRAGMENT_CREATE";
+    public static final String CHATROOMS_FRAGMENT_NEARBY = "CHATROOMS_FRAGMENT_NEARBY";
     public static final String FRAGMENT_TO_INFLATE = "FRAGMENT_TO_INFLATE";
+    public static final String CHATROOMS_FRAGMENT_MYCHATROOMS = "CHATROOMS_FRAGMENT_MYCHATROOMS";
+    public static final String PRIVATECONVERSATIONS_FRAGMENT = "PRIVATECONVERSATIONS_FRAGMENT";
 
     private boolean mRequestingLocationUpdates = true;
     private LocationRequest mLocationRequest;
@@ -78,13 +81,17 @@ public class MainActivity extends AppCompatActivity
     public GeoLocation mCurrentGeoLocation;
     private String mLastUpdateTime;
 
+    private User mActiveUser;
+    private DatabaseReference mActiveUserRef;
+    private ValueEventListener mActiveUserVEL;
+
     private Fragment fragment;
     public HashMap<String, User> usersInRange = new HashMap<>();
     public HashMap<String, ChatRoom> chatroomsInRange = new HashMap<>();
 
     // Store to speed up location updates //
-    private GeoFire geoFireUsers;
-    private GeoFire geoFireChatrooms;
+    public GeoFire geoFireUsers;
+    public GeoFire geoFireChatrooms;
     private String userId;
     private GeoQuery mGeoQueryUsers;
     private GeoQuery mGeoQueryChatrooms;
@@ -94,7 +101,6 @@ public class MainActivity extends AppCompatActivity
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
         setContentView(R.layout.activity_main);
         BottomBar bottomBar = (BottomBar) findViewById(R.id.bottomBar);
 
@@ -106,14 +112,24 @@ public class MainActivity extends AppCompatActivity
                     .build();
         }
 
+        // Fetch current User
+        mActiveUserRef = Utils.getDatabase().getReference("/users/" + Utils.getCurrentUserUid());
+        mActiveUserVEL = new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                mActiveUser = dataSnapshot.getValue(User.class);
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+                Log.w(TAG, "onCreate: active user's data could not be fetched from Firebase");
+            }
+        };
+        mActiveUserRef.addValueEventListener(mActiveUserVEL);
+
         geoFireUsers = new GeoFire(Utils.getDatabase().getReference("userLocations"));
         geoFireChatrooms = new GeoFire(Utils.getDatabase().getReference("chatroomLocations"));
-        userId = FirebaseAuth.getInstance().getCurrentUser().getUid();
-
-//        if (savedInstanceState != null) {
-//            updateValuesFromBundle(savedInstanceState);
-//            return;
-//        }
+        userId = Utils.getCurrentUserUid();
 
         // Set up bottom bar if not previously done
         bottomBar.setOnTabSelectListener(new OnTabSelectListener() {
@@ -139,8 +155,12 @@ public class MainActivity extends AppCompatActivity
         String param = intent.getStringExtra(MainActivity.FRAGMENT_TO_INFLATE);
         if (param != null) {
             switch (param) {
-                case CHATROOMS_FRAGMENT_CREATION:
+                case CHATROOMS_FRAGMENT_NEARBY:
+                case CHATROOMS_FRAGMENT_MYCHATROOMS:
                     bottomBar.selectTabAtPosition(1);
+                    break;
+                case PRIVATECONVERSATIONS_FRAGMENT:
+                    bottomBar.selectTabAtPosition(2);
                     break;
                 default:
                     bottomBar.selectTabAtPosition(0);
@@ -270,6 +290,8 @@ public class MainActivity extends AppCompatActivity
             this.getMenuInflater().inflate(R.menu.my_profile_menu, menu);
         else if (fragment instanceof ChatRoomsFragment)
             this.getMenuInflater().inflate(R.menu.chat_rooms_menu, menu);
+        else if (fragment instanceof PrivateConversationsFragment)
+            this.getMenuInflater().inflate(R.menu.pm_menu, menu);
 
         return true;
     }
@@ -285,8 +307,10 @@ public class MainActivity extends AppCompatActivity
                         .addOnCompleteListener(new OnCompleteListener<Void>() {
                             public void onComplete(@NonNull Task<Void> task) {
                                 // user is now signed out
-                                System.err.println("User signed out");
+                                Log.d(TAG, "User signed out");
+                                Utils.resetCurrentUserUid();
                                 startActivity(new Intent(MainActivity.this, LoginActivity.class));
+                                mActiveUserRef.removeEventListener(mActiveUserVEL); // Safely disable listener before destroying activity
                                 finish();
                             }
                         });
@@ -295,6 +319,31 @@ public class MainActivity extends AppCompatActivity
             case R.id.action_new_chat_rooms:
                 startActivity(new Intent(this, ChatRoomCreationActivity.class));
                 return true;
+
+            case R.id.action_new_friend_conv:
+                Intent intentNFC = new Intent(this, ShowUserListActivity.class);
+                String keyRefNFC = "/users/" + Utils.getCurrentUserUid() + "/friends/";
+                intentNFC.putExtra(ShowUserListActivity.REF_PATH, keyRefNFC);
+                intentNFC.putExtra(ShowUserListActivity.TARGET, ShowUserListActivity.TARGET_CREATECONVO);
+                if (mActiveUser != null)
+                    intentNFC.putExtra(ShowUserListActivity.NUM_USERS, mActiveUser.friends.size());
+
+                this.startActivity(intentNFC);
+
+                return true;
+
+            case R.id.action_showFriendList:
+                Intent intentSF = new Intent(this, ShowUserListActivity.class);
+                String keyRefSF = "/users/" + Utils.getCurrentUserUid() + "/friends/";
+                intentSF.putExtra(ShowUserListActivity.REF_PATH, keyRefSF);
+                intentSF.putExtra(ShowUserListActivity.TARGET, ShowUserListActivity.TARGET_FRIENDLIST);
+                if (mActiveUser != null)
+                    intentSF.putExtra(ShowUserListActivity.NUM_USERS, mActiveUser.friends.size());
+
+                this.startActivity(intentSF);
+
+                return true;
+
 
             default:
                 // If we got here, the user's action was not recognized.
@@ -342,6 +391,7 @@ public class MainActivity extends AppCompatActivity
                         } catch (IntentSender.SendIntentException e) {
                             // Ignore the error.
                         }
+
                         break;
                     case LocationSettingsStatusCodes.SETTINGS_CHANGE_UNAVAILABLE:
                         // Location settings are not satisfied. However, we have no way
@@ -390,7 +440,8 @@ public class MainActivity extends AppCompatActivity
             // to handle the case where the user grants the permission. See the documentation
             // for ActivityCompat#requestPermissions for more details.
             Log.d(TAG, "Permissions missing for location updates!");
-            return;
+            this.requestPermissions(new String[]{Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.ACCESS_COARSE_LOCATION},
+                    Utils.MY_PERMISSIONS_ACCESS_LOCATION);
         }
 
         LocationServices.FusedLocationApi.requestLocationUpdates(mGoogleApiClient, mLocationRequest, this);
@@ -420,9 +471,14 @@ public class MainActivity extends AppCompatActivity
 
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
-        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
-
-        // TODO: 28/11/16 Handle case where the user grants the permission
+        switch (requestCode) {
+            case Utils.MY_PERMISSIONS_ACCESS_LOCATION:
+                startLocationUpdates();
+                break;
+            default:
+                super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+                break;
+        }
     }
 
     @Override
@@ -441,51 +497,19 @@ public class MainActivity extends AppCompatActivity
 
         // Update location in user as well
         DatabaseReference ref = Utils.getDatabase().getReference();
-        String userUid = FirebaseAuth.getInstance().getCurrentUser().getUid();
-        ref.child("/users/" + userUid + "/location/").setValue(mCurrentGeoLocation);
+        String userUid = Utils.getCurrentUserUid();
+        ref.child("/users/" + userUid + "/location/")
+                .setValue(new LatLng(mCurrentGeoLocation.latitude, mCurrentGeoLocation.longitude));
 
         // Update GeoQueries
         mGeoQueryUsers.setCenter(mCurrentGeoLocation);
         mGeoQueryChatrooms.setCenter(mCurrentGeoLocation);
     }
 
-//    public void onSaveInstanceState(Bundle savedInstanceState) {
-//        savedInstanceState.putBoolean(REQUESTING_LOCATION_UPDATES_KEY,
-//                mRequestingLocationUpdates);
-//        savedInstanceState.putParcelable(LOCATION_KEY, mCurrentLocation);
-//        savedInstanceState.putString(LAST_UPDATED_TIME_STRING_KEY, mLastUpdateTime);
-//        super.onSaveInstanceState(savedInstanceState);
-//    }
-//
-//    private void updateValuesFromBundle(Bundle savedInstanceState) {
-//        if (savedInstanceState != null) {
-//            // Update the value of mRequestingLocationUpdates from the Bundle, and
-//            // make sure that the Start Updates and Stop Updates buttons are
-//            // correctly enabled or disabled.
-//            if (savedInstanceState.keySet().contains(REQUESTING_LOCATION_UPDATES_KEY)) {
-//                mRequestingLocationUpdates = savedInstanceState.getBoolean(
-//                        REQUESTING_LOCATION_UPDATES_KEY);
-//            }
-//
-//            // Update the value of mCurrentLocation from the Bundle and update the
-//            // UI to show the correct latitude and longitude.
-//            if (savedInstanceState.keySet().contains(LOCATION_KEY)) {
-//                // Since LOCATION_KEY was found in the Bundle, we can be sure that
-//                // mCurrentLocationis not null.
-//                mCurrentLocation = savedInstanceState.getParcelable(LOCATION_KEY);
-//            }
-//
-//            // Update the value of mLastUpdateTime from the Bundle and update the UI.
-//            if (savedInstanceState.keySet().contains(LAST_UPDATED_TIME_STRING_KEY)) {
-//                mLastUpdateTime = savedInstanceState.getString(
-//                        LAST_UPDATED_TIME_STRING_KEY);
-//            }
-//        }
-//    }
-
     private static void deleteLocationFromFirebase(String uid) {
         DatabaseReference ref = Utils.getDatabase().getReference("locations");
         GeoFire geoFire = new GeoFire(ref);
         geoFire.removeLocation(uid);
     }
+
 }
