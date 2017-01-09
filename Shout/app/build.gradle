@@ -1,9 +1,5 @@
 apply plugin: 'com.android.application'
 
-dependencies {
-    compile project(':library')
-}
-
 android {
     compileSdkVersion 25
     buildToolsVersion "24.0.2"
@@ -51,6 +47,7 @@ dependencies {
     compile 'com.firebase:geofire-android:2.1.1'
     compile 'de.hdodenhof:circleimageview:2.1.0'
     compile 'me.himanshusoni.chatmessageview:chat-message-view:1.0.3'
+    compile 'com.google.maps.android:android-maps-utils:0.4+'
 }
 
 
