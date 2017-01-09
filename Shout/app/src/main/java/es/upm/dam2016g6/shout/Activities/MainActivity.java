@@ -199,7 +199,7 @@ public class MainActivity extends AppCompatActivity
                 usersInRange.remove(key);
                 if (fragment instanceof DiscoveryFragment) {
                     DiscoveryFragment df = (DiscoveryFragment)fragment;
-                    df.undrawUser(key);
+                    //df.undrawUser(key);
                 }
             }
 
@@ -208,7 +208,7 @@ public class MainActivity extends AppCompatActivity
                 Log.d(MainActivity.this.TAG, String.format("User Key %s moved within the search area to [%f,%f]", key, location.latitude, location.longitude));
                 if (fragment instanceof DiscoveryFragment) {
                     DiscoveryFragment df = (DiscoveryFragment)fragment;
-                    df.updateUserLocation(key, location);
+                    //df.updateUserLocation(key, location);
                 }
             }
 

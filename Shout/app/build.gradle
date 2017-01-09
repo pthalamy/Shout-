@@ -1,5 +1,9 @@
 apply plugin: 'com.android.application'
 
+dependencies {
+    compile project(':library')
+}
+
 android {
     compileSdkVersion 25
     buildToolsVersion "24.0.2"
