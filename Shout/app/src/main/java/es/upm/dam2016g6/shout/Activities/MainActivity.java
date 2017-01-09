@@ -498,7 +498,7 @@ public class MainActivity extends AppCompatActivity
         // Update location in user as well
         DatabaseReference ref = Utils.getDatabase().getReference();
         String userUid = Utils.getCurrentUserUid();
-        ref.child("/users/" + userUid + "location")
+        ref.child("/users/" + userUid + "/location")
                 .setValue(new ShoutLocation(mCurrentGeoLocation.latitude, mCurrentGeoLocation.longitude));
 
         // Update GeoQueries
@@ -506,10 +506,8 @@ public class MainActivity extends AppCompatActivity
         mGeoQueryChatrooms.setCenter(mCurrentGeoLocation);
     }
 
-    private static void deleteLocationFromFirebase(String uid) {
-        DatabaseReference ref = Utils.getDatabase().getReference("locations");
-        GeoFire geoFire = new GeoFire(ref);
-        geoFire.removeLocation(uid);
+    private void deleteLocationFromFirebase(String uid) {
+        this.geoFireUsers.removeLocation(uid);
     }
 
 }

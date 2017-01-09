@@ -1,6 +1,7 @@
 package es.upm.dam2016g6.shout.model;
 
 import com.google.android.gms.maps.model.LatLng;
+import com.google.firebase.database.Exclude;
 import com.google.firebase.database.IgnoreExtraProperties;
 
 /**
@@ -22,6 +23,7 @@ public class ShoutLocation {
         this.longitude = longitude;
     }
 
+    @Exclude
     public LatLng getShoutLocation(){
         return new LatLng(latitude,longitude);
     }

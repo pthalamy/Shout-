@@ -41,6 +41,7 @@ import java.util.HashMap;
 import es.upm.dam2016g6.shout.R;
 import es.upm.dam2016g6.shout.activities.MainActivity;
 import es.upm.dam2016g6.shout.model.ChatRoom;
+import es.upm.dam2016g6.shout.model.ShoutLocation;
 import es.upm.dam2016g6.shout.model.User;
 
 import static com.facebook.FacebookSdk.getApplicationContext;
@@ -177,7 +178,7 @@ public class DiscoveryFragment extends android.support.v4.app.Fragment implement
             public void onLocationResult(String key, GeoLocation location) {
                 if (location != null) {
                     User user = mUsers.get(key);
-                    user.location = new LatLng(location.latitude,location.longitude);
+                    user.location = new ShoutLocation(location.latitude,location.longitude);
 
                     Marker userMarker = googleMap.addMarker(new MarkerOptions()
                             .position(new LatLng(location.latitude, location.longitude))
