@@ -2,7 +2,6 @@ package es.upm.dam2016g6.shout.model;
 
 import android.util.Log;
 
-import com.google.android.gms.maps.model.LatLng;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
@@ -11,7 +10,6 @@ import com.google.firebase.database.Exclude;
 import com.google.firebase.database.IgnoreExtraProperties;
 import com.google.firebase.database.Query;
 import com.google.firebase.database.ValueEventListener;
-import com.google.maps.android.clustering.ClusterItem;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -23,16 +21,14 @@ import es.upm.dam2016g6.shout.support.Utils;
  */
 
 @IgnoreExtraProperties
-public class User implements ClusterItem {
-    public  int profilePhoto;
+public class User {
     private static final String TAG = "TAG_" + User.class.getSimpleName();
     private static User currentUser = null;
 
     public String uid;
     public String name;
     public String facebookId;
-   // public ShoutLocation location;
-    public LatLng location;
+    public ShoutLocation location;
     public Map<String, Boolean> chatrooms = new HashMap<>();
     public Map<String, Boolean> friends = new HashMap<>(); // index to friends as uids
     // index to private conversations as follows: <chatUid, contactUid>
@@ -42,16 +38,15 @@ public class User implements ClusterItem {
         // Default constructor required for calls to DataSnapshot.getValue(User.class)
     }
 
-    public User(String uid, String name, String facebookId, LatLng location) {
+    public User(String uid, String name, String facebookId) {
         this.uid = uid;
         this.name = name;
         this.facebookId = facebookId;
-        this.location = location;
     }
 
     @Exclude
     public static User writeNewUser(String uid, String name, String facebookId) {
-        User user = new User(uid, name, facebookId,null);
+        User user = new User(uid, name, facebookId);
 
         DatabaseReference ref = Utils.getDatabase().getReference("users");
         ref.child(uid).setValue(user);
@@ -124,11 +119,5 @@ public class User implements ClusterItem {
         ref.child("/users/" + userUid + "/privateChats/" + convUid).removeValue();
         ref.child("/privateConversations/" + convUid).removeValue();
         ref.child("/messages/" + convUid).removeValue();
-    }
-
-
-    @Override
-    public LatLng getPosition() {
-        return location;
     }
 }

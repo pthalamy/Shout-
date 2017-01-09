@@ -30,6 +30,7 @@ public class FacebookLike {
         FacebookLike that = (FacebookLike) o;
 
         return id.equals(that.id);
+
     }
 
     @Override
