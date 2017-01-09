@@ -1,8 +1,9 @@
 package es.upm.dam2016g6.shout.model;
 
+import com.google.firebase.database.IgnoreExtraProperties;
+
 import com.google.android.gms.maps.model.LatLng;
 import com.google.firebase.database.Exclude;
-import com.google.firebase.database.IgnoreExtraProperties;
 
 /**
  * Created by pthalamy on 4/1/17.

@@ -32,7 +32,6 @@ public class User implements ClusterItem {
     public String name;
     public String facebookId;
     public ShoutLocation location;
-//    public LatLng location;
     public Map<String, Boolean> chatrooms = new HashMap<>();
     public Map<String, Boolean> friends = new HashMap<>(); // index to friends as uids
     // index to private conversations as follows: <chatUid, contactUid>
@@ -125,7 +124,6 @@ public class User implements ClusterItem {
         ref.child("/messages/" + convUid).removeValue();
     }
 
-
     @Override
     @Exclude
     public LatLng getPosition() {
@@ -136,4 +134,5 @@ public class User implements ClusterItem {
 
         return new LatLng(location.latitude, location.longitude);
     }
+
 }
