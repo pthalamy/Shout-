@@ -115,7 +115,7 @@ public class DiscoveryFragment extends android.support.v4.app.Fragment implement
                 // For zooming automatically to the location of the marker
                 CameraPosition cameraPosition = new CameraPosition.Builder()
                         .target(new LatLng(mainActivity.mCurrentGeoLocation.latitude, mainActivity.mCurrentGeoLocation.longitude))
-                        .zoom((float) (mainActivity.discoveryRadius * 9))
+                        .zoom((float) (mainActivity.discoveryRadius * 15))
                         .build();
                 googleMap.animateCamera(CameraUpdateFactory.newCameraPosition(cameraPosition));
 

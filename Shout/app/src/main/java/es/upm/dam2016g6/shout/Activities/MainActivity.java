@@ -179,10 +179,12 @@ public class MainActivity extends AppCompatActivity
                     @Override
                     public void onDataChange(DataSnapshot dataSnapshot) {
                         User user = dataSnapshot.getValue(User.class);
-                        usersInRange.put(user.uid, user);
+                        if (!user.uid.equals(Utils.getCurrentUserUid()))
+                            usersInRange.put(user.uid, user);
                         if (fragment instanceof DiscoveryFragment) {
                             DiscoveryFragment df = (DiscoveryFragment)fragment;
-                            df.drawUser(user);
+                            if (!user.uid.equals(Utils.getCurrentUserUid()))
+                                df.drawUser(user);
                         }
                     }
 
