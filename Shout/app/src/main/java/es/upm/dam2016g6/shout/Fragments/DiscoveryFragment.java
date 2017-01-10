@@ -200,7 +200,7 @@ public class DiscoveryFragment extends android.support.v4.app.Fragment implement
 
     public void drawChatroom(final ChatRoom chatroom) {
         mChatrooms.put(chatroom.uid, chatroom);
-        mainActivity.geoFireUsers.getLocation(chatroom.uid, new LocationCallback() {
+        mainActivity.geoFireChatrooms.getLocation(chatroom.uid, new LocationCallback() {
             @Override
             public void onLocationResult(String key, GeoLocation location) {
                 if (location != null) {
