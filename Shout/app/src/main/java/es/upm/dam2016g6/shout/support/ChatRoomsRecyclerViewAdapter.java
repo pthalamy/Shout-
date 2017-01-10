@@ -1,5 +1,7 @@
 package es.upm.dam2016g6.shout.support;
 
+import android.content.DialogInterface;
+import android.support.v7.app.AlertDialog;
 import android.view.View;
 import android.widget.Button;
 
@@ -40,6 +42,9 @@ public class ChatRoomsRecyclerViewAdapter extends FirebaseRecyclerAdapter<ChatRo
                 chatroom.location.latitude,
                 chatroom.location.longitude));
         viewHolder.tv_range.setText(Utils.distanceInMetersToString(chatroom.range));
+        if (!chatroom.currentUserIsInRange()) {
+            viewHolder.tv_distance.setTextColor(viewHolder.itemView.getResources().getColor(R.color.colorCancelRed));
+        }
 
         // Get number of hours from creation and until expiration
         Date now = new Date();
@@ -77,21 +82,38 @@ public class ChatRoomsRecyclerViewAdapter extends FirebaseRecyclerAdapter<ChatRo
 
     public static void setButtonJoin(Button bt) {
         bt.setText("JOIN");
-        bt.setBackgroundColor(bt.getResources().getColor(R.color.colorPrimary));
-                bt.setOnClickListener(new View.OnClickListener() {
+        bt.setHighlightColor(bt.getResources().getColor(R.color.colorPrimary));
+        bt.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 Button bt = (Button)view;
                 ChatRoom chatroom = (ChatRoom) view.getTag();
-                ChatRoom.joinChatroom(chatroom);
-                setButtonLeave(bt);
+                if (chatroom.currentUserIsInRange()) {
+                    ChatRoom.joinChatroom(chatroom);
+                    setButtonLeave(bt);
+                } else {
+                    // 1. Instantiate an AlertDialog.Builder with its constructor
+                    AlertDialog.Builder builder = new AlertDialog.Builder(bt.getContext());
+                    // 2. Chain together various setter methods to set the dialog characteristics
+                    // Add the buttons
+                    builder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
+                        public void onClick(DialogInterface dialog, int id) {
+                        }
+                    });
+
+                    builder.setMessage("You are out of the chatroom's range, please get closer to it and try again.")
+                            .setTitle("Cannot Join Chatroom");
+                    // 3. Get the AlertDialog from create()
+                    AlertDialog dialog = builder.create();
+                    dialog.show();
+                }
             }
         });
     }
 
     public static void setButtonLeave(Button bt) {
         bt.setText("LEAVE");
-        bt.setBackgroundColor(bt.getResources().getColor(R.color.colorCancelRed));
+        bt.setHighlightColor(bt.getResources().getColor(R.color.colorCancelRed));
         bt.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {

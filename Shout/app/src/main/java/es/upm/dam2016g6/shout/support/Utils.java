@@ -120,10 +120,7 @@ public class Utils {
         return sfd.format(new Date(timestamp));
     }
 
-    public static String getUserDistanceToLatLng(double lat, double lng) {
-        if (currentLocation == null)
-            return "Unavailable";
-
+    public static float distanceToLatLng(double lat, double lng) {
         Location loc1 = new Location("");
         loc1.setLatitude(currentLocation.latitude);
         loc1.setLongitude(currentLocation.longitude);
@@ -132,9 +129,14 @@ public class Utils {
         loc2.setLatitude(lat);
         loc2.setLongitude(lng);
 
-        float distanceInMeters = loc1.distanceTo(loc2);
+        return loc1.distanceTo(loc2);
+    }
 
-        return distanceInMetersToString(distanceInMeters);
+    public static String getUserDistanceToLatLng(double lat, double lng) {
+        if (currentLocation == null)
+            return "Unavailable";
+
+        return distanceInMetersToString(distanceToLatLng(lat, lng));
     }
 
     public static String distanceInMetersToString(float dist) {

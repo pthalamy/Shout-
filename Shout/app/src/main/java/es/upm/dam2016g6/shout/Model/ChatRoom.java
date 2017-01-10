@@ -161,6 +161,11 @@ public class ChatRoom {
         return mChatroomsReference;
     }
 
+    @Exclude
+    public boolean currentUserIsInRange() {
+        return Utils.distanceToLatLng(this.location.latitude, this.location.longitude) <= this.range;
+    }
+
     public static void joinChatroom(ChatRoom chatroom) {
         DatabaseReference ref = Utils.getDatabase().getReference();
         String userUid = Utils.getCurrentUserUid();
